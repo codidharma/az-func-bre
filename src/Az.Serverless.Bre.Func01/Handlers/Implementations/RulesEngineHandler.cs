@@ -4,9 +4,7 @@ using RulesEngine.Interfaces;
 using RulesEngine.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace Az.Serverless.Bre.Func01.Handlers.Implementations
 {
@@ -22,6 +20,8 @@ namespace Az.Serverless.Bre.Func01.Handlers.Implementations
         public void AddOrUpdateWorkflows(string workflowString)
         {
             var workflows = JsonConvert.DeserializeObject<List<Workflow>>(workflowString);
+
+            _rulesEngine.AddOrUpdateWorkflow(workflows.ToArray());
             
         }
     }
