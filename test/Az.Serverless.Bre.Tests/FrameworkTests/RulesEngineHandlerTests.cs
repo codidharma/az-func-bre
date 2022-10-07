@@ -14,19 +14,6 @@ namespace Az.Serverless.Bre.Tests.FrameworkTests
         private readonly IRulesEngineHandler _rulesEngineHandler;
 
         [Fact]
-        public async Task Execute_Rules_Throws_Exception_When_Rules_Config_Is_Null()
-        {
-            //Arrange
-
-            //Act
-            Func<Task> task = async () =>{
-                await _rulesEngineHandler.ExecuteRulesAsync(null);
-            };
-
-            await task.Should().ThrowAsync<NotImplementedException>();
-        }
-
-        [Fact]
         public void RulesEngineHandler_Constructor_Throws_Argument_Null_Exception_For_Null_Rules_Engine_Dependency_Injection()
         {
             //Act

@@ -16,10 +16,6 @@ namespace Az.Serverless.Bre.Func01.Handlers.Implementations
             _rulesEngine = rulesEngine ??
                 throw new ArgumentNullException(nameof(rulesEngine));
         }
-        public Task ExecuteRulesAsync(object rulesConfigFile)
-        {
-            throw new NotImplementedException();
-        }
 
 
 
