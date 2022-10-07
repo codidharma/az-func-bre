@@ -3,13 +3,10 @@
     "WorkflowName": "FDInterestRates",
     "Rules": [
       {
-        "RuleName": "GiveDiscount10",
-        "Expression": "basicInfo.country == \"india\" AND basicInfo.loyalityFactor <= 2 AND basicInfo.totalPurchasesToDate >= 5000 AND orderInfo.totalOrders > 2 AND telemetryInfo.noOfVisitsPerMonth > 2"
-      },
-      {
-        "RuleName": "GiveDiscount20",
-        "Expression": "basicInfo.country == \"india\" AND basicInfo.loyalityFactor == 3 AND basicInfo.totalPurchasesToDate >= 10000 AND orderInfo.totalOrders > 2 AND telemetryInfo.noOfVisitsPerMonth > 2"
+        "RuleName": "Senior.Citizen.12Months Rate Rule",
+        "Expression": "input.age > 60 AND input.durationInMonths = 12"
       }
+      
     ]
   }
 ] 

@@ -1,9 +1,12 @@
 ﻿using Az.Serverless.Bre.Func01.Handlers.Implementations;
 using Az.Serverless.Bre.Func01.Handlers.Interfaces;
+using Az.Serverless.Bre.Func01.Models;
 using FluentAssertions;
 using Newtonsoft.Json;
 using RulesEngine.Exceptions;
 using RulesEngine.Interfaces;
+using System.Dynamic;
+using System.Text;
 using BRE = RulesEngine;
 
 namespace Az.Serverless.Bre.Tests
@@ -85,15 +88,71 @@ namespace Az.Serverless.Bre.Tests
         [Fact]
         public async Task ExecuteRulesAsync_Should_Throw_ArgumentNullException_When_Rules_Config_Is_Empty_String()
         {
+            //Arrange
+            dynamic data = new ExpandoObject();
+            data.age = 65;
+
+            var evaluationInputs = new EvaluationInputParameter[]
+                {
+                    new EvaluationInputParameter(name: "input", value: data)
+                };
+
+
             //Act
 
             Func<Task> task = async () =>
             {
-                await _rulesEngineHandler.ExecuteRulesAsync(string.Empty);
+                await _rulesEngineHandler.ExecuteRulesAsync(string.Empty, evaluationInputs);
             };
 
             await task.Should().ThrowExactlyAsync<ArgumentNullException>()
                 .WithMessage("The rules config should not be null or empty string");
+        }
+
+        [Fact]
+        public async Task ExecuteRulesAsync_Should_Throw_ArgumentNullException_When_EvaluationInputParam_Is_Null()
+        {
+            //Arrange
+            var rulesConfig = "[{}]";
+
+            //Act
+            Func<Task> task = async () =>
+            {
+                await _rulesEngineHandler.ExecuteRulesAsync(rulesConfig, null);
+            };
+
+            await task.Should().ThrowAsync<ArgumentNullException>()
+                .WithMessage("EvaluationInputParamerters can not be null or empty");
+        }
+
+        [Fact]
+        public async Task ExecuteRulesAsync_Should_Add_Or_Update_Workflow_Without_Throwing_Exception()
+        {
+            //Arrange
+            var rulesConfigPath = "..\\..\\..\\TestData\\RuleConfigs\\FDInterestRates.json";
+            var rulesConfig = GetRulesConfig(rulesConfigPath);
+
+            dynamic data = new ExpandoObject();
+            data.age = 65;
+            data.durationInMonths = 12;
+
+            var evaluationInputs = new EvaluationInputParameter[] {
+                new EvaluationInputParameter(name: "input", value: data)
+            };
+
+            //Act
+            await _rulesEngineHandler.ExecuteRulesAsync(rulesConfig, evaluationInputs);
+
+
+        }
+
+        private string GetRulesConfig(string filePath)
+        {
+           var bytes = File.ReadAllBytes(filePath);
+           
+           return Encoding.UTF8.GetString(bytes);
+
+
         }
     }
 }

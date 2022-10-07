@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using Az.Serverless.Bre.Func01.Models;
+using System.Threading.Tasks;
 
 namespace Az.Serverless.Bre.Func01.Handlers.Interfaces
 {
@@ -6,7 +7,8 @@ namespace Az.Serverless.Bre.Func01.Handlers.Interfaces
     {
         public void AddOrUpdateWorkflows(string workflowString);
 
-        public Task ExecuteRulesAsync(string rulesConfigFile);
+        public Task ExecuteRulesAsync(string rulesConfigFile, EvaluationInputParameter[] evaluationInputs);
+
 
     }
 }
