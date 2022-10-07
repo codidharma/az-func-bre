@@ -38,7 +38,7 @@ namespace Az.Serverless.Bre.Tests.FrameworkTests
         [Theory]
         [InlineData("This is non json string")]
         [InlineData("\"somealue\":")]
-        public void  AddOrUpdateWorkflow_Throws_Exception_When_Config_String_Cannot_Be_Deserialized(string configString)
+        public void  AddOrUpdateWorkflow_Throws_JsonException_When_Config_String_Cannot_Be_Deserialized(string configString)
         {
 
             //Act
