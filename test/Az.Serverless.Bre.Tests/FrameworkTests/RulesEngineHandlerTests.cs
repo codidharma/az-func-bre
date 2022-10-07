@@ -81,5 +81,19 @@ namespace Az.Serverless.Bre.Tests.FrameworkTests
             action.Should().Throw<RuleValidationException>();
 
         }
+
+        [Fact]
+        public async Task ExecuteRulesAsync_Should_Throw_ArgumentNullException_When_Rules_Config_Is_Empty_String()
+        {
+            //Act
+
+            Func<Task> task = async () =>
+            {
+                await _rulesEngineHandler.ExecuteRulesAsync(string.Empty);
+            };
+
+            await task.Should().ThrowExactlyAsync<ArgumentNullException>()
+                .WithMessage("The rules config should not be null or empty string");
+        }
     }
 }

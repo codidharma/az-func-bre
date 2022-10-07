@@ -1,8 +1,12 @@
-﻿namespace Az.Serverless.Bre.Func01.Handlers.Interfaces
+﻿using System.Threading.Tasks;
+
+namespace Az.Serverless.Bre.Func01.Handlers.Interfaces
 {
     public interface IRulesEngineHandler
     {
         public void AddOrUpdateWorkflows(string workflowString);
+
+        public Task ExecuteRulesAsync(string rulesConfigFile);
 
     }
 }

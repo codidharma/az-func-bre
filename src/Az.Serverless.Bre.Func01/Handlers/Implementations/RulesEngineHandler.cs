@@ -4,7 +4,7 @@ using RulesEngine.Interfaces;
 using RulesEngine.Models;
 using System;
 using System.Collections.Generic;
-
+using System.Threading.Tasks;
 
 namespace Az.Serverless.Bre.Func01.Handlers.Implementations
 {
@@ -23,6 +23,12 @@ namespace Az.Serverless.Bre.Func01.Handlers.Implementations
 
             _rulesEngine.AddOrUpdateWorkflow(workflows.ToArray());
 
+        }
+
+        public async Task ExecuteRulesAsync(string rulesConfigFile)
+        {
+            if (string.IsNullOrEmpty(rulesConfigFile))
+                throw new ArgumentNullException(message: "The rules config should not be null or empty string", null);
         }
     }
 }
