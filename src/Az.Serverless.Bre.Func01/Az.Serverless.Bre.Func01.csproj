@@ -6,6 +6,7 @@
   <ItemGroup>
     <PackageReference Include="Azure.Storage.Blobs" Version="12.13.1" />
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="4.1.1" />
+    <PackageReference Include="RulesEngine" Version="4.0.0" />
   </ItemGroup>
   <ItemGroup>
     <None Update="host.json">
