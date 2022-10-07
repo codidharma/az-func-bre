@@ -7,6 +7,8 @@ namespace Az.Serverless.Bre.Func01.Handlers.Interfaces
     {
         public void AddOrUpdateWorkflows(string workflowString);
 
+        public string GetWorkflowName(string rulesCongfig);
+
         public Task ExecuteRulesAsync(string rulesConfigFile, EvaluationInputParameter[] evaluationInputs);
 
 

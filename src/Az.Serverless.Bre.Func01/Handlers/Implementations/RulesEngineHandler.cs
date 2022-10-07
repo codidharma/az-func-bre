@@ -1,4 +1,5 @@
-﻿using Az.Serverless.Bre.Func01.Handlers.Interfaces;
+﻿using AutoMapper;
+using Az.Serverless.Bre.Func01.Handlers.Interfaces;
 using Az.Serverless.Bre.Func01.Models;
 using Newtonsoft.Json;
 using RulesEngine.Interfaces;
@@ -13,10 +14,15 @@ namespace Az.Serverless.Bre.Func01.Handlers.Implementations
     public class RulesEngineHandler : IRulesEngineHandler
     {
         private readonly IRulesEngine _rulesEngine;
-        public RulesEngineHandler(IRulesEngine rulesEngine)
+        private readonly IMapper _mapper;
+
+        public RulesEngineHandler(IRulesEngine rulesEngine, IMapper mapper)
         {
             _rulesEngine = rulesEngine ??
                 throw new ArgumentNullException(nameof(rulesEngine));
+
+            _mapper = mapper ?? 
+                throw new ArgumentNullException(nameof(mapper));
         }
 
         public void AddOrUpdateWorkflows(string workflowString)
@@ -39,7 +45,20 @@ namespace Az.Serverless.Bre.Func01.Handlers.Implementations
             
             this.AddOrUpdateWorkflows(rulesConfigFile);
 
-            
+            var ruleInputs = _mapper.Map<RuleParameter[]>(evaluationInputs);
+
+            var result = await _rulesEngine.ExecuteAllRulesAsync(
+                workflowName: GetWorkflowName(rulesConfigFile),
+                ruleParams: ruleInputs
+                ).ConfigureAwait(false);
+
+        }
+
+        public string GetWorkflowName(string rulesCongfig)
+        {
+            var workflows = JsonConvert.DeserializeObject<List<Workflow>>(rulesCongfig);
+
+            return workflows[0].WorkflowName;
         }
     }
 }

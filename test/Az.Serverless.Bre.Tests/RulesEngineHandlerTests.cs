@@ -1,7 +1,10 @@
-﻿using Az.Serverless.Bre.Func01.Handlers.Implementations;
+﻿using AutoMapper;
+using Az.Serverless.Bre.Func01.Handlers.Implementations;
 using Az.Serverless.Bre.Func01.Handlers.Interfaces;
+using Az.Serverless.Bre.Func01.Mapper.Configuration;
 using Az.Serverless.Bre.Func01.Models;
 using FluentAssertions;
+using Microsoft.WindowsAzure.Storage.Blob.Protocol;
 using Newtonsoft.Json;
 using RulesEngine.Exceptions;
 using RulesEngine.Interfaces;
@@ -15,12 +18,14 @@ namespace Az.Serverless.Bre.Tests
     {
         private readonly IRulesEngineHandler _rulesEngineHandler;
         private readonly IRulesEngine _rulesEngine;
+        private readonly IMapper _mapper = AutoMapperConfiguration.Initialize();
 
         public RulesEngineHandlerTests()
         {
             _rulesEngine = new BRE.RulesEngine(reSettings: null);
 
-            _rulesEngineHandler = new RulesEngineHandler(_rulesEngine);
+
+            _rulesEngineHandler = new RulesEngineHandler(_rulesEngine, _mapper);
         }
 
         [Fact]
@@ -29,11 +34,25 @@ namespace Az.Serverless.Bre.Tests
             //Act
             Action action = () =>
             {
-                new RulesEngineHandler(null);
+                new RulesEngineHandler(null, _mapper);
             };
 
             action.Should().ThrowExactly<ArgumentNullException>()
                 .WithMessage("Value cannot be null. (Parameter 'rulesEngine')");
+        }
+
+        public void RulesEngineHandler_Constructor_Should_Throw_ArgumentNullException_For_Null_IMapper_Dependency_Injection()
+        {
+            //Act
+
+            Action action = () => {
+                new RulesEngineHandler(_rulesEngine, null);
+            };
+
+            //Assert
+
+            action.Should().Throw<ArgumentNullException>()
+                .WithMessage("Value cannot be null. (Parameter 'mapper')");
         }
 
         [Theory]
@@ -129,21 +148,122 @@ namespace Az.Serverless.Bre.Tests
         public async Task ExecuteRulesAsync_Should_Add_Or_Update_Workflow_Without_Throwing_Exception()
         {
             //Arrange
-            var rulesConfigPath = "..\\..\\..\\TestData\\RuleConfigs\\FDInterestRates.json";
-            var rulesConfig = GetRulesConfig(rulesConfigPath);
+            string rulesConfig;
+            EvaluationInputParameter[] evaluationInputs;
 
-            dynamic data = new ExpandoObject();
-            data.age = 65;
-            data.durationInMonths = 12;
-
-            var evaluationInputs = new EvaluationInputParameter[] {
-                new EvaluationInputParameter(name: "input", value: data)
-            };
+            SetupTestData(out rulesConfig, out evaluationInputs);
 
             //Act
             await _rulesEngineHandler.ExecuteRulesAsync(rulesConfig, evaluationInputs);
 
 
+        }
+
+        [Fact]
+        public async Task ExecuteRulesAsync_Should_Map_EvaluationInput_To_RuleParameter_Without_Throwing_Exception()
+        {
+            //Arrange
+            string rulesConfig;
+            EvaluationInputParameter[] evaluationInputs;
+
+            SetupTestData(out rulesConfig, out evaluationInputs);
+
+            //Act
+
+            await _rulesEngineHandler.ExecuteRulesAsync(rulesConfig, evaluationInputs);
+
+        }
+
+        [Fact]
+        public void GetWorkflowName_Should_Throw_NullReferenceException_When_Empty_Rules_Config_Passed()
+        {
+            //Arrange
+
+            //Act
+            Action action = () =>
+            {
+                _rulesEngineHandler.GetWorkflowName(string.Empty);
+            };
+
+           //Assert
+
+            action.Should().ThrowExactly<NullReferenceException>();
+            
+
+
+
+        }
+
+        [Fact]
+        public void GetWorkflowName_Should_Determine_Name_Of_Workflow_In_Rules_Config_String()
+        {
+            //Arrange
+
+            string rulesConfig = GetRulesConfig();
+            string expecectedWorkflowName = "FDInterestRates";
+
+
+            //Act
+            string workflowName = _rulesEngineHandler.GetWorkflowName(rulesConfig);
+
+            //Assert
+
+            workflowName.Should().BeEquivalentTo(expecectedWorkflowName);
+
+        }
+
+        [Fact]
+        public async Task ExecuteRuleAsync_Should_Evaluate_Rules_Without_Throwing_Exception()
+        {
+            //Arrange
+            string rulesConfig;
+            EvaluationInputParameter[] evaluationInputs;
+
+            SetupTestData(out rulesConfig, out evaluationInputs);
+
+            //Act
+
+            await _rulesEngineHandler.ExecuteRulesAsync(rulesConfig, evaluationInputs);
+
+            //Assert
+            Assert.True(false);
+
+        }
+
+        private void SetupTestData(out string rulesConfig, out EvaluationInputParameter[] evaluationInputs)
+        {
+            rulesConfig = GetRulesConfig();
+
+            evaluationInputs = SetupInput();
+        }
+
+        private EvaluationInputParameter[] SetupInput()
+        {
+            EvaluationInputParameter[] evaluationInputs;
+
+            StringBuilder builder = new StringBuilder("{");
+            builder.Append("\"age\":65");
+            builder.Append(",");
+            builder.Append("\"durationInMonths\":12");
+            builder.Append("}");
+
+            //dynamic data = new ExpandoObject();
+            //data.age = 65;
+            //data.durationInMonths = 12;
+
+            evaluationInputs = new EvaluationInputParameter[] {
+                new EvaluationInputParameter(name: "input", value: builder.ToString())
+            };
+            return evaluationInputs;
+        }
+
+        private string GetRulesConfig()
+        {
+            string rulesConfig;
+            var rulesConfigPath = "..\\..\\..\\TestData\\RuleConfigs\\FDInterestRates.json";
+
+            rulesConfig = GetRulesConfig(rulesConfigPath);
+            return rulesConfig;
         }
 
         private string GetRulesConfig(string filePath)
