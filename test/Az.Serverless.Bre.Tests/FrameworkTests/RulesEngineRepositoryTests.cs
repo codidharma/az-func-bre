@@ -1,14 +1,8 @@
 ﻿using Az.Serverless.Bre.Func01.Repositories.Implementations;
 using Az.Serverless.Bre.Func01.Repositories.Interfaces;
 using FluentAssertions;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Dynamic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using BREModels = RulesEngine.Models;
 
 namespace Az.Serverless.Bre.Tests.FrameworkTests
@@ -34,7 +28,7 @@ namespace Az.Serverless.Bre.Tests.FrameworkTests
 
             //Assert
             isValid.Should().BeFalse();
-            
+
 
         }
 
@@ -43,7 +37,7 @@ namespace Az.Serverless.Bre.Tests.FrameworkTests
         {
             //Arrange
 
-            var dataInputArray =  new BREModels.RuleParameter[] { new BREModels.RuleParameter("input", null) };
+            var dataInputArray = new BREModels.RuleParameter[] { new BREModels.RuleParameter("input", null) };
 
             //Act
             bool isValid = await _rulesEngineRepository.ValidateDataInput(dataInputArray);
@@ -86,7 +80,7 @@ namespace Az.Serverless.Bre.Tests.FrameworkTests
 
             //Assert
             isValid.Should().BeFalse();
-            
+
         }
 
         [Fact]
@@ -143,7 +137,7 @@ namespace Az.Serverless.Bre.Tests.FrameworkTests
             //Assert
             isValid.Should().BeFalse();
 
-                        
+
         }
     }
 }

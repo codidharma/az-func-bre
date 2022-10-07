@@ -2,11 +2,7 @@
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Az.Serverless.Bre.Func01.Repositories.Implementations
@@ -16,11 +12,11 @@ namespace Az.Serverless.Bre.Func01.Repositories.Implementations
         private readonly BlobContainerClient _blobContainerClient;
         public BlobRulesStoreRepository(BlobContainerClient blobContainerClient)
         {
-            _blobContainerClient = blobContainerClient 
+            _blobContainerClient = blobContainerClient
                 ?? throw new ArgumentNullException(nameof(blobContainerClient));
 
         }
-        
+
         public async Task<object> GetConfigAsync(string configFileName)
         {
             var blobClient = _blobContainerClient.GetBlobClient(configFileName);
@@ -37,7 +33,7 @@ namespace Az.Serverless.Bre.Func01.Repositories.Implementations
 
                 return null;
             }
-            
+
 
         }
     }

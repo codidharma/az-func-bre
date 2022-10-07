@@ -1,9 +1,6 @@
 ﻿using Az.Serverless.Bre.Func01.Repositories.Interfaces;
 using RulesEngine.Models;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Az.Serverless.Bre.Func01.Repositories.Implementations
@@ -12,7 +9,8 @@ namespace Az.Serverless.Bre.Func01.Repositories.Implementations
     {
         public async Task<bool> ValidateDataInput(RuleParameter[] ruleParameter)
         {
-            return await Task.Factory.StartNew(() => {
+            return await Task.Factory.StartNew(() =>
+            {
 
                 bool retVal = true;
 
@@ -35,11 +33,12 @@ namespace Az.Serverless.Bre.Func01.Repositories.Implementations
 
         public async Task<bool> ValidateRulesConfig(object config)
         {
-            return await Task.Factory.StartNew(() => {
-                
+            return await Task.Factory.StartNew(() =>
+            {
+
                 bool retVal = true;
 
-                if(config == null)
+                if (config == null)
                     retVal = false;
 
                 return retVal;

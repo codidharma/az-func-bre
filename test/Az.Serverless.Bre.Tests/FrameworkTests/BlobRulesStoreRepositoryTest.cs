@@ -9,7 +9,7 @@ namespace Az.Serverless.Bre.Tests.FrameworkTests
     {
         public BlobRulesStoreRepositoryTest()
         {
-            
+
         }
 
         [Fact]
@@ -23,7 +23,7 @@ namespace Az.Serverless.Bre.Tests.FrameworkTests
 
             IRulesStoreRepository _rulesStoreRepository = new BlobRulesStoreRepository(
                 BlobUtils.MockBlobContainerClient(RuleConfigPath));
-            
+
             string expectedWorflowName = "FDInterestRates";
 
             //Act
@@ -32,7 +32,7 @@ namespace Az.Serverless.Bre.Tests.FrameworkTests
 
 
             //Assert
-            actualWorkflowName.Should().Be(expectedWorflowName);    
+            actualWorkflowName.Should().Be(expectedWorflowName);
 
 
         }
@@ -48,15 +48,15 @@ namespace Az.Serverless.Bre.Tests.FrameworkTests
             {
                 IRulesStoreRepository rulesStoreRepository = new BlobRulesStoreRepository(null);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 //Assert
                 ex.Should().BeOfType<ArgumentNullException>();
                 ex.Message.Should().BeEquivalentTo(expectedErrorMessage);
-                
+
             }
 
-            
+
         }
 
         [Fact]

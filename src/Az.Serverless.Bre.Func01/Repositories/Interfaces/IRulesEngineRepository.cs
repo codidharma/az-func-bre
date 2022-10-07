@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using RulesEngine.Models;
 using System.Threading.Tasks;
-using RulesEngine.Models;
 
 namespace Az.Serverless.Bre.Func01.Repositories.Interfaces
 {

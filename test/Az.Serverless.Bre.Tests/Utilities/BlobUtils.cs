@@ -27,7 +27,7 @@ namespace Az.Serverless.Bre.Tests.Utilities
 
                 mock.Setup(x => x.DownloadContentAsync())
                .Throws(new Exception());
-                
+
                 return mock.Object;
 
             }
