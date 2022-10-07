@@ -2,15 +2,9 @@
 using Az.Serverless.Bre.Func01.Handlers.Interfaces;
 using FluentAssertions;
 using Newtonsoft.Json;
+using RulesEngine.Exceptions;
 using RulesEngine.Interfaces;
 using BRE = RulesEngine;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using RulesEngine.Exceptions;
 
 namespace Az.Serverless.Bre.Tests.FrameworkTests
 {
@@ -21,13 +15,13 @@ namespace Az.Serverless.Bre.Tests.FrameworkTests
 
         public RulesEngineHandlerTests()
         {
-             _rulesEngine = new BRE.RulesEngine(reSettings: null);
+            _rulesEngine = new BRE.RulesEngine(reSettings: null);
 
             _rulesEngineHandler = new RulesEngineHandler(_rulesEngine);
         }
 
         [Fact]
-        public void RulesEngineHandler_Constructor_Throws_Argument_Null_Exception_For_Null_Rules_Engine_Dependency_Injection()
+        public void RulesEngineHandler_Constructor_Should_Throw_Argument_Null_Exception_For_Null_Rules_Engine_Dependency_Injection()
         {
             //Act
             Action action = () =>
@@ -42,7 +36,7 @@ namespace Az.Serverless.Bre.Tests.FrameworkTests
         [Theory]
         [InlineData("This is non json string")]
         [InlineData("\"somealue\":")]
-        public void  AddOrUpdateWorkflow_Throws_JsonException_When_Config_String_Cannot_Be_Deserialized(string configString)
+        public void AddOrUpdateWorkflow_Should_Throw_JsonException_When_Config_String_Cannot_Be_Deserialized(string configString)
         {
 
             //Act
@@ -54,16 +48,17 @@ namespace Az.Serverless.Bre.Tests.FrameworkTests
             //Assert
             action.Should()
                 .Throw<JsonException>(because: "The provided string is not a validjson");
-            
+
 
         }
 
         [Theory]
         [InlineData("")]
-        public void AddOrUpdateWorkflow_Throws_Exception_When_Workflows_Are_Null(string configString)
+        public void AddOrUpdateWorkflow_Should_Throw_Exception_When_Workflows_Are_Null(string configString)
         {
             //Act
-            Action action = () => {
+            Action action = () =>
+            {
                 _rulesEngineHandler.AddOrUpdateWorkflows(configString);
             };
 
@@ -74,10 +69,11 @@ namespace Az.Serverless.Bre.Tests.FrameworkTests
 
         [Theory]
         [InlineData("[{}]")]
-        public void AddOrUpdateWorkflow_Throws_Exception_When_Workflows_Fails_Validation(string configString)
+        public void AddOrUpdateWorkflow_Should_Throw_Exception_When_Workflows_Fails_Validation(string configString)
         {
             //Act
-            Action action = () => {
+            Action action = () =>
+            {
                 _rulesEngineHandler.AddOrUpdateWorkflows(configString);
             };
 

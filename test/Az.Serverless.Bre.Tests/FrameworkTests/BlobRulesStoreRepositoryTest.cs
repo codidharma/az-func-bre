@@ -15,7 +15,7 @@ namespace Az.Serverless.Bre.Tests.FrameworkTests
         }
 
         [Fact]
-        public async Task Blob_Rules_Store_GetConfig_Returns_Rules_Config_JsonString()
+        public async Task Blob_Rules_Store_GetConfig_Should_Return_Rules_Config_Object()
         {
             //Arrange
 
@@ -40,7 +40,7 @@ namespace Az.Serverless.Bre.Tests.FrameworkTests
         }
 
         [Fact]
-        public async Task Blob_Rules_Store_Repository_GetConfig_Returns_Rules_Config_As_String()
+        public async Task Blob_Rules_Store_Repository_GetConfig_Should_Return_Rules_Config_As_String()
         {
             //Arrange
             string rulesConfigFileName = "FDInterestRates.json";
@@ -55,8 +55,9 @@ namespace Az.Serverless.Bre.Tests.FrameworkTests
             //Act
             var configString = await _rulesStoreRepository.GetConfigAsStringAsync(rulesConfigFileName);
 
-            Action action =  () => {
-                
+            Action action = () =>
+            {
+
                 JToken.Parse(configString);
             };
 
@@ -67,7 +68,7 @@ namespace Az.Serverless.Bre.Tests.FrameworkTests
         }
 
         [Fact]
-        public void Blob_Rules_Store_Constructor_Throw_Argument_NullException_When_BlobContainerClient_Is_Null()
+        public void Blob_Rules_Store_Constructor_Should_Throw_Argument_NullException_When_BlobContainerClient_Is_Null()
         {
             //Arrange
             var expectedErrorMessage = "Value cannot be null. (Parameter 'blobContainerClient')";

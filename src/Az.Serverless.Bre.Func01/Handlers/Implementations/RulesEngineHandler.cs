@@ -22,7 +22,7 @@ namespace Az.Serverless.Bre.Func01.Handlers.Implementations
             var workflows = JsonConvert.DeserializeObject<List<Workflow>>(workflowString);
 
             _rulesEngine.AddOrUpdateWorkflow(workflows.ToArray());
-            
+
         }
     }
 }
