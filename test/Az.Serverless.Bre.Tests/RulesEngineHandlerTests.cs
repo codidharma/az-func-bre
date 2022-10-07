@@ -21,7 +21,7 @@ namespace Az.Serverless.Bre.Tests
         }
 
         [Fact]
-        public void RulesEngineHandler_Constructor_Should_Throw_Argument_Null_Exception_For_Null_Rules_Engine_Dependency_Injection()
+        public void RulesEngineHandler_Constructor_Should_Throw_ArgumentNullException_For_Null_Rules_Engine_Dependency_Injection()
         {
             //Act
             Action action = () =>
@@ -54,7 +54,7 @@ namespace Az.Serverless.Bre.Tests
 
         [Theory]
         [InlineData("")]
-        public void AddOrUpdateWorkflow_Should_Throw_Exception_When_Workflows_Are_Null(string configString)
+        public void AddOrUpdateWorkflow_Should_Throw_NullReferenceException_When_Workflows_Are_Null(string configString)
         {
             //Act
             Action action = () =>
@@ -69,7 +69,7 @@ namespace Az.Serverless.Bre.Tests
 
         [Theory]
         [InlineData("[{}]")]
-        public void AddOrUpdateWorkflow_Should_Throw_Exception_When_Workflows_Fails_Validation(string configString)
+        public void AddOrUpdateWorkflow_Should_Throw_RuleValidationException_When_Workflows_Fails_Validation(string configString)
         {
             //Act
             Action action = () =>

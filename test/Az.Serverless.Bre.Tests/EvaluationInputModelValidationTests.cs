@@ -11,7 +11,7 @@ namespace Az.Serverless.Bre.Tests
         [Theory]
         [InlineData(null)]
         [InlineData("")]
-        public void ModelValidator_Should_Return_False_And_Validation_Error_When_Name_Property_IsNullOrEmpty(string name)
+        public void Validate_Should_Return_False_And_Validation_Error_When_Name_Property_IsNullOrEmpty(string name)
         {
             //Arrange
             EvaluationInputParameter evaluationInput = new(
@@ -34,7 +34,7 @@ namespace Az.Serverless.Bre.Tests
         }
 
         [Fact]
-        public void ModelValidator_Should_Return_False_And_Validation_Error_When_Value_Property_Is_Null()
+        public void Validate_Should_Return_False_And_Validation_Error_When_Value_Property_Is_Null()
         {
             //Arrange
             EvaluationInputParameter evaluationInputParameter = new(
@@ -56,8 +56,8 @@ namespace Az.Serverless.Bre.Tests
         [Theory]
         [InlineData(null, null)]
         [InlineData("", null)]
-        public void 
-            ModelValidator_Should_Return_False_And_validation_Errors_When_Both_Name_And_Value_Props_Are_Null(string name, object value)
+        public void
+            Validate_Should_Return_False_And_validation_Errors_When_Both_Name_And_Value_Props_Are_Null(string name, object value)
         {
             //Arrange
 
