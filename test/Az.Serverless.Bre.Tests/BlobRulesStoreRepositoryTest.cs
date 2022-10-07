@@ -5,7 +5,7 @@ using FluentAssertions;
 using FluentAssertions.Json;
 using Newtonsoft.Json.Linq;
 
-namespace Az.Serverless.Bre.Tests.FrameworkTests
+namespace Az.Serverless.Bre.Tests
 {
     public class BlobRulesStoreRepositoryTest
     {

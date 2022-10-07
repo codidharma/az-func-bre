@@ -5,7 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Dynamic;
 using BREModels = RulesEngine.Models;
 
-namespace Az.Serverless.Bre.Tests.FrameworkTests
+namespace Az.Serverless.Bre.Tests
 {
     [ExcludeFromCodeCoverage]
     public class RulesEngineRepositoryTests
@@ -55,7 +55,7 @@ namespace Az.Serverless.Bre.Tests.FrameworkTests
 
             var dataInputArray = new BREModels.RuleParameter[]
                 {
-                    new BREModels.RuleParameter(String.Empty, data)
+                    new BREModels.RuleParameter(string.Empty, data)
                 };
 
             //Act
@@ -72,7 +72,7 @@ namespace Az.Serverless.Bre.Tests.FrameworkTests
             //Arrange
             var dataInputArray = new BREModels.RuleParameter[]
                 {
-                    new BREModels.RuleParameter(String.Empty, null)
+                    new BREModels.RuleParameter(string.Empty, null)
                 };
 
             //Act

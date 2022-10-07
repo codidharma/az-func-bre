@@ -6,7 +6,7 @@ using RulesEngine.Exceptions;
 using RulesEngine.Interfaces;
 using BRE = RulesEngine;
 
-namespace Az.Serverless.Bre.Tests.FrameworkTests
+namespace Az.Serverless.Bre.Tests
 {
     public class RulesEngineHandlerTests
     {
