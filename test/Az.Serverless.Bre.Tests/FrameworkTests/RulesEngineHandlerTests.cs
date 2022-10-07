@@ -23,7 +23,7 @@ namespace Az.Serverless.Bre.Tests.FrameworkTests
                 await _rulesEngineHandler.ExecuteRulesAsync(null);
             };
 
-            await task.Should().ThrowAsync<NullReferenceException>();
+            await task.Should().ThrowAsync<NotImplementedException>();
         }
 
         [Fact]

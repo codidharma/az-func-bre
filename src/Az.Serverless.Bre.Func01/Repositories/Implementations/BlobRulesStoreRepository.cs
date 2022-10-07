@@ -17,7 +17,7 @@ namespace Az.Serverless.Bre.Func01.Repositories.Implementations
 
         }
 
-        public async Task<object> GetConfigAsync(string configFileName)
+        public async Task<object> GetConfigAsObjectAsync(string configFileName)
         {
             var blobClient = _blobContainerClient.GetBlobClient(configFileName);
 
@@ -35,6 +35,23 @@ namespace Az.Serverless.Bre.Func01.Repositories.Implementations
             }
 
 
+        }
+
+        public async Task<string> GetConfigAsStringAsync(string configFileName)
+        {
+            var blobClient = _blobContainerClient.GetBlobClient(configFileName);
+
+            try
+            {
+                BlobDownloadResult blobDownloadResult = await blobClient.DownloadContentAsync()
+                    .ConfigureAwait(false);
+
+                return blobDownloadResult.Content.ToString();
+            }
+            catch
+            {
+                return null;
+            }
         }
     }
 }
