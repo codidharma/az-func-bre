@@ -5,6 +5,7 @@ using FluentAssertions;
 using RulesEngine.Models;
 using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,13 +25,15 @@ namespace Az.Serverless.Bre.Tests
         {
             //Arrange
             EvaluationInputParameter evaluationInput = new(
-                name: "Input", value: "[{}]"
+                name: "Input", value: "{}"
                 );
 
             var ruleParam = _mapper.Map<RuleParameter>(evaluationInput);
 
-            ruleParam.Should().BeEquivalentTo(evaluationInput);
-            
+            ruleParam.Name
+                .Should().BeEquivalentTo(evaluationInput.Name);
+
+
         }
     }
 }

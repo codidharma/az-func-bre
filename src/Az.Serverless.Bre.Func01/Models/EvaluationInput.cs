@@ -1,6 +1,9 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Dynamic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,7 +23,17 @@ namespace Az.Serverless.Bre.Func01.Models
         public EvaluationInputParameter(string name, object value)
         {
             Name = name;
-            Value = value;
+
+            if (value != null && value.GetType() == typeof(string))
+            {
+                Value = ConvertJsonToExpandoObject(value);
+            }
+            else
+            {
+                Value = value;
+            }
+
+            //Value = value;
         }
 
         public bool Validate(out List<ValidationResult> validationResults)
@@ -35,6 +48,13 @@ namespace Az.Serverless.Bre.Func01.Models
                 );
 
             return isValid;
+        }
+
+        private ExpandoObject ConvertJsonToExpandoObject(object value)
+        {
+            var convertor = new ExpandoObjectConverter();
+
+            return JsonConvert.DeserializeObject<ExpandoObject>((string)value, convertor);
         }
 
     }

@@ -99,5 +99,20 @@ namespace Az.Serverless.Bre.Tests
 
         }
 
+        [Fact]
+        public void EvaluationInputParameter_Constructor_Should_Convert_Json_String_To_Expando_Object()
+        {
+            //Arrange
+            EvaluationInputParameter evaluationInput = new(
+                name: "Input", value: "{}");
+
+
+            //Act
+
+            evaluationInput.Value
+                .Should().BeOfType<ExpandoObject>();
+
+        }
+
     }
 }
