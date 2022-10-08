@@ -14,6 +14,8 @@ namespace Az.Serverless.Bre.Func01.Extensions
         {
             bool isSuccess = false;
             string errorMessage = "No rules were executed";
+            List<ExecutionResult> executionResults = new 
+                List<ExecutionResult>();
 
             var successfullyExecutedRules = 
                 ruleResultTrees.Where(x => x.IsSuccess).ToList();
@@ -22,14 +24,26 @@ namespace Az.Serverless.Bre.Func01.Extensions
             {
                 isSuccess = true;
                 errorMessage = null ;
+
+                foreach (var rule in successfullyExecutedRules)
+                {
+                    if (rule.ActionResult != null && rule.ActionResult.Output != null)
+                    {
+                        
+                        executionResults.Add((ExecutionResult)rule.ActionResult.Output);
+                    }
+
+                    
+                }
+
             }
-
-
 
             return new EvaluationOutput
             {
                 IsEvaluationSuccessful = isSuccess,
-                ErrorMessage = errorMessage
+                ErrorMessage = errorMessage,
+                ExecutionResults = executionResults
+                
             };
 
             

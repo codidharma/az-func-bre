@@ -1,4 +1,5 @@
 ﻿using Az.Serverless.Bre.Func01.Extensions;
+using Az.Serverless.Bre.Func01.Models;
 using FluentAssertions;
 using RulesEngine.Models;
 using System;
@@ -81,6 +82,32 @@ namespace Az.Serverless.Bre.Tests
             //Assert
             evaluationOutput.ErrorMessage
                 .Should().BeNull();
+        }
+
+        [Fact]
+        public void ToDto_Should_Set_ExecutionResult_List_With_One_Execution_Result_When_One_Rule_Is_Executed()
+        {
+            //Arrange
+            var ruleResultTreeList = new List<RuleResultTree>
+            {
+                new RuleResultTree
+                {
+                    ActionResult = new ActionResult()
+                    {Output = new ExecutionResult{ Result = 10.56} },
+                    IsSuccess = true
+                }
+
+            };
+
+            //Act
+
+            var evaluationOutput = ruleResultTreeList.ToDto();
+
+            //Assert
+            evaluationOutput
+                .ExecutionResults.Count().Should().Be(1);
+
+            
         }
 
         

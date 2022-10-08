@@ -3,11 +3,13 @@ using Az.Serverless.Bre.Func01.Handlers.Implementations;
 using Az.Serverless.Bre.Func01.Handlers.Interfaces;
 using Az.Serverless.Bre.Func01.Mapper.Configuration;
 using Az.Serverless.Bre.Func01.Models;
+using Az.Serverless.Bre.Func01.RuleEngineCustomizations;
 using FluentAssertions;
 using Microsoft.WindowsAzure.Storage.Blob.Protocol;
 using Newtonsoft.Json;
 using RulesEngine.Exceptions;
 using RulesEngine.Interfaces;
+using RulesEngine.Models;
 using System.Dynamic;
 using System.Text;
 using BRE = RulesEngine;
@@ -22,7 +24,15 @@ namespace Az.Serverless.Bre.Tests
 
         public RulesEngineHandlerTests()
         {
-            _rulesEngine = new BRE.RulesEngine(reSettings: null);
+            var rulesEngineSetting = new ReSettings
+            {
+                CustomActions = new Dictionary<string, Func<BRE.Actions.ActionBase>>
+                {
+                    { "ExecutionResultCustomAction", () => new ExecutionResultCustomAction()}
+                }
+            };
+
+            _rulesEngine = new BRE.RulesEngine(reSettings: rulesEngineSetting);
 
 
             _rulesEngineHandler = new RulesEngineHandler(_rulesEngine, _mapper);
@@ -252,6 +262,7 @@ namespace Az.Serverless.Bre.Tests
 
             //Assert
             evaluationOutput.ExecutionResults.Count().Should().Be(1);
+            evaluationOutput.ExecutionResults[0].Result.Should().Be(10.56);
         }
 
 

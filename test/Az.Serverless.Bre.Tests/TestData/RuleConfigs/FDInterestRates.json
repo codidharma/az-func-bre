@@ -4,7 +4,15 @@
     "Rules": [
       {
         "RuleName": "Senior.Citizen.12Months Rate Rule",
-        "Expression": "input.age > 60 AND input.durationInMonths == 12"
+        "Expression": "input.age > 60 AND input.durationInMonths == 12",
+        "Actions": {
+          "OnSuccess": {
+            "Name": "ExecutionResultCustomAction",
+            "Context": {
+              "ExecutionResultCustomActionInput":  10.56
+            }
+          }
+        } 
       }
       
     ]
