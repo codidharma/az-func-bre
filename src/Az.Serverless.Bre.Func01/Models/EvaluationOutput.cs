@@ -11,5 +11,7 @@ namespace Az.Serverless.Bre.Func01.Models
         public bool IsEvaluationSuccessful { get; set; }
 
         public string ErrorMessage { get; set; }
+
+        public List<ExecutionResult> ExecutionResults { get; set; }
     }
 }

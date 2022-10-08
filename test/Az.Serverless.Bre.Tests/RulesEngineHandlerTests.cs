@@ -237,6 +237,24 @@ namespace Az.Serverless.Bre.Tests
 
         }
 
+        [Fact]
+        public async Task ExecuteRulesAsync_Should_Return_AnArray_With_One_Result_For_One_Rule_Execution()
+        {
+            //Arrange
+            string rulesConfig;
+            EvaluationInputParameter[] evaluationInputs;
+            SetupTestData(out rulesConfig, out evaluationInputs);
+
+            //Act
+            var evaluationOutput = await
+                _rulesEngineHandler.ExecuteRulesAsync(rulesConfig, evaluationInputs)
+                .ConfigureAwait(false);
+
+            //Assert
+            evaluationOutput.ExecutionResults.Count().Should().Be(1);
+        }
+
+
         private void SetupTestData(out string rulesConfig, out EvaluationInputParameter[] evaluationInputs)
         {
             rulesConfig = GetRulesConfig();
