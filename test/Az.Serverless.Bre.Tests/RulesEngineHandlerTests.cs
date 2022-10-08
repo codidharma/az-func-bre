@@ -41,6 +41,7 @@ namespace Az.Serverless.Bre.Tests
                 .WithMessage("Value cannot be null. (Parameter 'rulesEngine')");
         }
 
+        [Fact]
         public void RulesEngineHandler_Constructor_Should_Throw_ArgumentNullException_For_Null_IMapper_Dependency_Injection()
         {
             //Act
@@ -223,10 +224,16 @@ namespace Az.Serverless.Bre.Tests
 
             //Act
 
-            await _rulesEngineHandler.ExecuteRulesAsync(rulesConfig, evaluationInputs);
+            EvaluationOutput evaluationOutput = 
+                await _rulesEngineHandler.ExecuteRulesAsync(rulesConfig, evaluationInputs)
+                .ConfigureAwait(false);
 
             //Assert
-            Assert.True(false);
+            evaluationOutput.Should().NotBeNull();
+            evaluationOutput.ErrorMessage
+                .Should().BeNull();
+            evaluationOutput.IsEvaluationSuccessful
+                .Should().BeTrue();
 
         }
 

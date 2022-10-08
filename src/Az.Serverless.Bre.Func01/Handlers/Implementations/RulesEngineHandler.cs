@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Az.Serverless.Bre.Func01.Extensions;
 using Az.Serverless.Bre.Func01.Handlers.Interfaces;
 using Az.Serverless.Bre.Func01.Models;
 using Newtonsoft.Json;
@@ -33,7 +34,7 @@ namespace Az.Serverless.Bre.Func01.Handlers.Implementations
 
         }
 
-        public async Task ExecuteRulesAsync(string rulesConfigFile, EvaluationInputParameter[] evaluationInputs)
+        public async Task<EvaluationOutput> ExecuteRulesAsync(string rulesConfigFile, EvaluationInputParameter[] evaluationInputs)
         {
             if (string.IsNullOrEmpty(rulesConfigFile))
                 throw new 
@@ -51,6 +52,8 @@ namespace Az.Serverless.Bre.Func01.Handlers.Implementations
                 workflowName: GetWorkflowName(rulesConfigFile),
                 ruleParams: ruleInputs
                 ).ConfigureAwait(false);
+
+            return result.ToDto();
 
         }
 
