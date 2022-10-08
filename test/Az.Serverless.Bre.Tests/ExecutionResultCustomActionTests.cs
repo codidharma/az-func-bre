@@ -30,7 +30,10 @@ namespace Az.Serverless.Bre.Tests
             //Assert
             actualExecutionResult.Should().BeOfType<ExecutionResult>();
             actualExecutionResult.Should().BeEquivalentTo(expectedResult);
-            
+            ((ExecutionResult)actualExecutionResult).Result
+                .Should().BeOfType<double>();
+
+
         } 
     }
 }
