@@ -1,17 +1,13 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Dynamic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Az.Serverless.Bre.Func01.Models
 {
     public class EvaluationInputParameter
-    {   
+    {
 
         [Required]
         [MinLength(1)]
@@ -42,7 +38,7 @@ namespace Az.Serverless.Bre.Func01.Models
 
             bool isValid = Validator.TryValidateObject(
                 instance: this,
-                validationContext: new ValidationContext(this,null, null),
+                validationContext: new ValidationContext(this, null, null),
                 validationResults: validationResults,
                 validateAllProperties: true
                 );

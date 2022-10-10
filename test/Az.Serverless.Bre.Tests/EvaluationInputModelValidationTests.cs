@@ -21,7 +21,7 @@ namespace Az.Serverless.Bre.Tests
             List<ValidationResult> errors;
 
             //Act
-            
+
             bool isValid = evaluationInput.Validate(out errors);
 
             //Assert
@@ -62,7 +62,7 @@ namespace Az.Serverless.Bre.Tests
             //Arrange
 
             EvaluationInputParameter evaluationInputParameter = new(
-                name:null, value:null
+                name: null, value: null
                 );
 
             List<ValidationResult> errors;
@@ -84,7 +84,7 @@ namespace Az.Serverless.Bre.Tests
             //Arrange
 
             EvaluationInputParameter evaluationInputParameter = new(
-                name:"Input", value: "{}"
+                name: "Input", value: "{}"
                 );
 
             List<ValidationResult> errors;

@@ -2,11 +2,6 @@
 using Az.Serverless.Bre.Func01.RuleEngineCustomizations;
 using FluentAssertions;
 using RulesEngine.Actions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Az.Serverless.Bre.Tests
 {
@@ -26,7 +21,7 @@ namespace Az.Serverless.Bre.Tests
             //Act
             var resultValueTask = resultCustomAction.Run(actionContext, null);
             var actualExecutionResult = resultValueTask.Result;
-            
+
             //Assert
             actualExecutionResult.Should().BeOfType<ExecutionResult>();
             actualExecutionResult.Should().BeEquivalentTo(expectedResult);
@@ -34,6 +29,6 @@ namespace Az.Serverless.Bre.Tests
                 .Should().BeOfType<double>();
 
 
-        } 
+        }
     }
 }

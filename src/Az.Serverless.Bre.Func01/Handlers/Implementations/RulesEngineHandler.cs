@@ -7,7 +7,6 @@ using RulesEngine.Interfaces;
 using RulesEngine.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Az.Serverless.Bre.Func01.Handlers.Implementations
@@ -22,7 +21,7 @@ namespace Az.Serverless.Bre.Func01.Handlers.Implementations
             _rulesEngine = rulesEngine ??
                 throw new ArgumentNullException(nameof(rulesEngine));
 
-            _mapper = mapper ?? 
+            _mapper = mapper ??
                 throw new ArgumentNullException(nameof(mapper));
         }
 
@@ -37,13 +36,13 @@ namespace Az.Serverless.Bre.Func01.Handlers.Implementations
         public async Task<EvaluationOutput> ExecuteRulesAsync(string rulesConfigFile, EvaluationInputParameter[] evaluationInputs)
         {
             if (string.IsNullOrEmpty(rulesConfigFile))
-                throw new 
+                throw new
                     ArgumentNullException(message: "The rules config should not be null or empty string", null);
 
             if (evaluationInputs == null || evaluationInputs.Length == 0)
-                throw new 
+                throw new
                     ArgumentNullException(message: "EvaluationInputParamerters can not be null or empty", null);
-            
+
             this.AddOrUpdateWorkflows(rulesConfigFile);
 
             var ruleInputs = _mapper.Map<RuleParameter[]>(evaluationInputs);

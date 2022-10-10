@@ -2,11 +2,6 @@
 using Az.Serverless.Bre.Func01.Models;
 using FluentAssertions;
 using RulesEngine.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Az.Serverless.Bre.Tests
 {
@@ -61,7 +56,7 @@ namespace Az.Serverless.Bre.Tests
             evaluationOutput.ErrorMessage
                 .Should().BeEquivalentTo("No rules were executed");
 
-            
+
         }
 
         [Fact]
@@ -107,9 +102,9 @@ namespace Az.Serverless.Bre.Tests
             evaluationOutput
                 .ExecutionResults.Count().Should().Be(1);
 
-            
+
         }
 
-        
+
     }
 }

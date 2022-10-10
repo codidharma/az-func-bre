@@ -1,10 +1,6 @@
 ﻿using Az.Serverless.Bre.Func01.Models;
 using RulesEngine.Actions;
 using RulesEngine.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Az.Serverless.Bre.Func01.RuleEngineCustomizations
@@ -19,7 +15,7 @@ namespace Az.Serverless.Bre.Func01.RuleEngineCustomizations
         {
             var customInput = context.GetContext<object>("ExecutionResultCustomActionInput");
 
-            return  new ValueTask<object>(new ExecutionResult { Result = customInput });
+            return new ValueTask<object>(new ExecutionResult { Result = customInput });
 
         }
     }

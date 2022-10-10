@@ -1,7 +1,6 @@
 ﻿using Az.Serverless.Bre.Func01.Functions;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Headers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Logging;
@@ -39,7 +38,7 @@ namespace Az.Serverless.Bre.Tests
         public async Task Execute_Rules_Async_Should_Return_Bad_Object_Result_When_No_WorkFlowName_Is_Provided_In_Header()
         {
             //Arrange
-            var expectedStatusCode = 400;
+
             var expectedResult = new BadRequestObjectResult("x-workflow-name header is mandatory")
             {
                 StatusCode = 400,
@@ -58,7 +57,7 @@ namespace Az.Serverless.Bre.Tests
             //executionResult.Should().BeOfType<BadRequestObjectResult>();
             executionResult
                 .Should().BeEquivalentTo<BadRequestObjectResult>(expectedResult);
-            
+
         }
 
 
@@ -73,7 +72,7 @@ namespace Az.Serverless.Bre.Tests
 
             _mockHttpRequest.Setup(x => x.Headers)
                 .Returns(headerDict);
-            
+
             return _mockHttpRequest.Object;
         }
 

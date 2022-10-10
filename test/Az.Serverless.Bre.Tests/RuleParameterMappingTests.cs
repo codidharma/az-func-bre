@@ -3,12 +3,6 @@ using Az.Serverless.Bre.Func01.Mapper.Configuration;
 using Az.Serverless.Bre.Func01.Models;
 using FluentAssertions;
 using RulesEngine.Models;
-using System;
-using System.Collections.Generic;
-using System.Dynamic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Az.Serverless.Bre.Tests
 {

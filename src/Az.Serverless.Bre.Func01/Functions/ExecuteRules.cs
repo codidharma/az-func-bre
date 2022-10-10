@@ -5,10 +5,6 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Net.Http.Headers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Az.Serverless.Bre.Func01.Functions
@@ -17,10 +13,10 @@ namespace Az.Serverless.Bre.Func01.Functions
     {
         [FunctionName($"{nameof(ExecuteRules)}Async")]
         public async Task<IActionResult> RunAsync(
-            [HttpTrigger(authLevel:AuthorizationLevel.Function, methods:"POST")]HttpRequest request,
+            [HttpTrigger(authLevel: AuthorizationLevel.Function, methods: "POST")] HttpRequest request,
             ILogger logger)
         {
-            
+
             var requestHeaders = request.GetTypedHeaders();
             var xWorkflowNameHeader = requestHeaders.Get<string>("x-workflow-name");
 

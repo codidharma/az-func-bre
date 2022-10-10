@@ -5,7 +5,6 @@ using Az.Serverless.Bre.Func01.Mapper.Configuration;
 using Az.Serverless.Bre.Func01.Models;
 using Az.Serverless.Bre.Func01.RuleEngineCustomizations;
 using FluentAssertions;
-using Microsoft.WindowsAzure.Storage.Blob.Protocol;
 using Newtonsoft.Json;
 using RulesEngine.Exceptions;
 using RulesEngine.Interfaces;
@@ -56,7 +55,8 @@ namespace Az.Serverless.Bre.Tests
         {
             //Act
 
-            Action action = () => {
+            Action action = () =>
+            {
                 new RulesEngineHandler(_rulesEngine, null);
             };
 
@@ -196,10 +196,10 @@ namespace Az.Serverless.Bre.Tests
                 _rulesEngineHandler.GetWorkflowName(string.Empty);
             };
 
-           //Assert
+            //Assert
 
             action.Should().ThrowExactly<NullReferenceException>();
-            
+
 
 
 
@@ -234,7 +234,7 @@ namespace Az.Serverless.Bre.Tests
 
             //Act
 
-            EvaluationOutput evaluationOutput = 
+            EvaluationOutput evaluationOutput =
                 await _rulesEngineHandler.ExecuteRulesAsync(rulesConfig, evaluationInputs)
                 .ConfigureAwait(false);
 
@@ -304,9 +304,9 @@ namespace Az.Serverless.Bre.Tests
 
         private string GetRulesConfig(string filePath)
         {
-           var bytes = File.ReadAllBytes(filePath);
-           
-           return Encoding.UTF8.GetString(bytes);
+            var bytes = File.ReadAllBytes(filePath);
+
+            return Encoding.UTF8.GetString(bytes);
 
 
         }
