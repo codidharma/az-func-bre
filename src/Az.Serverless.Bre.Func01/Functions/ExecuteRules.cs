@@ -1,4 +1,5 @@
 ﻿using Az.Serverless.Bre.Func01.Factory;
+using Az.Serverless.Bre.Func01.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
@@ -7,6 +8,8 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Net.Http.Headers;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 
 namespace Az.Serverless.Bre.Func01.Functions
@@ -65,6 +68,29 @@ namespace Az.Serverless.Bre.Func01.Functions
                     message: "Form Data is required"
                     );
             }
+
+            var aggregatedValidationErrors = new List<List<ValidationResult>>();
+
+            foreach (var formPart in formData)
+            {
+                var evaluationInput = new EvaluationInputParameter(formPart.Key, formPart.Value);
+
+                bool isValid = evaluationInput.Validate(out List<ValidationResult> evaluationErrors);
+
+                if(!isValid)
+                    aggregatedValidationErrors.Add(evaluationErrors);
+            }
+
+            if (aggregatedValidationErrors.Count > 0)
+            {
+                return ObjectResultFactory.Create(
+                    statusCode: StatusCodes.Status400BadRequest,
+                    contentType: contentType,
+                    message: aggregatedValidationErrors
+                    );
+            }
+
+            
 
             return null;
         }

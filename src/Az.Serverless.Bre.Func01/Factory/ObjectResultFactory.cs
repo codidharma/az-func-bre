@@ -8,7 +8,7 @@ namespace Az.Serverless.Bre.Func01.Factory
 {
     public static class ObjectResultFactory
     {
-        public static ObjectResult Create(int statusCode, string contentType, string message)
+        public static ObjectResult Create(int statusCode, string contentType, object message)
         {
 
             return new ObjectResult(message)

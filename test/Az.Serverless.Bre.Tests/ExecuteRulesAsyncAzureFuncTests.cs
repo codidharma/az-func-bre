@@ -1,5 +1,6 @@
 ﻿using Az.Serverless.Bre.Func01.Factory;
 using Az.Serverless.Bre.Func01.Functions;
+using Az.Serverless.Bre.Func01.Models;
 using Azure.Core;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
@@ -8,8 +9,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Primitives;
 using Microsoft.Net.Http.Headers;
 using Moq;
+using System.ComponentModel.DataAnnotations;
 using System.Net.Mime;
 
 namespace Az.Serverless.Bre.Tests
@@ -162,7 +165,25 @@ namespace Az.Serverless.Bre.Tests
             executionResult.Should().BeEquivalentTo(executionResult);
         }
 
-        private HttpRequest MockHttpRequest(bool provideWorkflowName, bool provideContentType, bool provideFormData)
+        [Fact]
+        public async Task Execute_Rules_Async_Should_Throw_bad_Object_Result_When_Form_Data_Cannot_Parse_to_Eval_input()
+        {
+            //Arrange
+            var httpRequest = MockHttpRequest(true, true, false);
+
+            //Act
+            var executionResult = await _executeRules.RunAsync(httpRequest, _logger);
+
+            //Assert
+            executionResult.Should().BeOfType<ObjectResult>();
+            ((ObjectResult)executionResult)
+                .StatusCode.Should().Be(StatusCodes.Status400BadRequest);
+            ((ObjectResult)executionResult)
+                .Value.Should().BeOfType<List<List<ValidationResult>>>();
+
+        }
+
+        private HttpRequest MockHttpRequest(bool provideWorkflowName, bool provideContentType, bool provideValidFormData)
         {
             _mockHttpRequest = new Mock<HttpRequest>();
 
@@ -183,22 +204,15 @@ namespace Az.Serverless.Bre.Tests
                     .Returns(true);
             }
 
-            if (provideFormData)
-            {
+            string formKeyName = provideValidFormData ? "input" : string.Empty;
 
-
-                var formCollection = new FormCollection(
-                    new Dictionary<string, Microsoft.Extensions.Primitives.StringValues>
-                    { {"input", ""}}
+            var formCollection = new FormCollection(
+                    new Dictionary<string, StringValues>
+                    { {formKeyName, ""}}
                     );
-                _mockHttpRequest.Setup(x => x.Form)
-                    .Returns(formCollection);
-                _mockHttpRequest.Setup(x => x.ReadFormAsync(default(CancellationToken)))
-                    .ReturnsAsync(formCollection);
-                
-            }
 
-
+            _mockHttpRequest.Setup(x => x.ReadFormAsync(default))
+                .ReturnsAsync(formCollection);
 
             _mockHttpRequest.Setup(x => x.Headers)
                 .Returns(headerDict);
