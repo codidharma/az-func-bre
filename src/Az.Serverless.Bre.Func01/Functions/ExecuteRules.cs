@@ -42,7 +42,7 @@ namespace Az.Serverless.Bre.Func01.Functions
             var contentTypeHeader = request.ContentType;
             
 
-            if (string.IsNullOrEmpty(contentTypeHeader) || contentTypeHeader != "multipart/form-data")
+            if (!request.HasFormContentType)
             {
                 return ObjectResultFactory
                     .Create(
