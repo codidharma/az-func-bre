@@ -11,11 +11,11 @@ namespace Az.Serverless.Bre.Tests
         [Theory]
         [InlineData(null)]
         [InlineData("")]
-        public void Validate_Should_Return_False_And_Validation_Error_When_Name_Property_IsNullOrEmpty(string name)
+        public void Validate_Should_Return_False_And_Validation_Error_When_Key_Property_IsNullOrEmpty(string name)
         {
             //Arrange
             EvaluationInputParameter evaluationInput = new(
-                name: null, value: new ExpandoObject()
+                key: null, value: new ExpandoObject()
                 );
 
             List<ValidationResult> errors;
@@ -29,7 +29,7 @@ namespace Az.Serverless.Bre.Tests
             isValid.Should().BeFalse();
             errors.Count.Should().Be(1);
             errors[0].ErrorMessage
-                .Should().BeEquivalentTo("The Name field is required.");
+                .Should().BeEquivalentTo("The Key field is required.");
 
         }
 
@@ -38,7 +38,7 @@ namespace Az.Serverless.Bre.Tests
         {
             //Arrange
             EvaluationInputParameter evaluationInputParameter = new(
-                name: "Input", value: null);
+                key: "Input", value: null);
 
             List<ValidationResult> errors;
 
@@ -62,7 +62,7 @@ namespace Az.Serverless.Bre.Tests
             //Arrange
 
             EvaluationInputParameter evaluationInputParameter = new(
-                name: null, value: null
+                key: null, value: null
                 );
 
             List<ValidationResult> errors;
@@ -84,7 +84,7 @@ namespace Az.Serverless.Bre.Tests
             //Arrange
 
             EvaluationInputParameter evaluationInputParameter = new(
-                name: "Input", value: "{}"
+                key: "Input", value: "{}"
                 );
 
             List<ValidationResult> errors;
@@ -104,7 +104,7 @@ namespace Az.Serverless.Bre.Tests
         {
             //Arrange
             EvaluationInputParameter evaluationInput = new(
-                name: "Input", value: "{}");
+                key: "Input", value: "{}");
 
 
             //Act

@@ -124,7 +124,7 @@ namespace Az.Serverless.Bre.Tests
 
             var evaluationInputs = new EvaluationInputParameter[]
                 {
-                    new EvaluationInputParameter(name: "input", value: data)
+                    new EvaluationInputParameter(key: "input", value: data)
                 };
 
 
@@ -288,7 +288,7 @@ namespace Az.Serverless.Bre.Tests
             //data.durationInMonths = 12;
 
             evaluationInputs = new EvaluationInputParameter[] {
-                new EvaluationInputParameter(name: "input", value: builder.ToString())
+                new EvaluationInputParameter(key: "input", value: builder.ToString())
             };
             return evaluationInputs;
         }

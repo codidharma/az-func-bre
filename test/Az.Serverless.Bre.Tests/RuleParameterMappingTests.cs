@@ -19,13 +19,13 @@ namespace Az.Serverless.Bre.Tests
         {
             //Arrange
             EvaluationInputParameter evaluationInput = new(
-                name: "Input", value: "{}"
+                key: "Input", value: "{}"
                 );
 
             var ruleParam = _mapper.Map<RuleParameter>(evaluationInput);
 
             ruleParam.Name
-                .Should().BeEquivalentTo(evaluationInput.Name);
+                .Should().BeEquivalentTo(evaluationInput.Key);
 
 
         }

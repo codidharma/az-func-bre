@@ -11,14 +11,14 @@ namespace Az.Serverless.Bre.Func01.Models
 
         [Required]
         [MinLength(1)]
-        public string Name { get; private set; }
+        public string Key { get; private set; }
 
         [Required]
         public object Value { get; private set; }
 
-        public EvaluationInputParameter(string name, object value)
+        public EvaluationInputParameter(string key, object value)
         {
-            Name = name;
+            Key = key;
 
             if (value != null && value.GetType() == typeof(string))
             {
