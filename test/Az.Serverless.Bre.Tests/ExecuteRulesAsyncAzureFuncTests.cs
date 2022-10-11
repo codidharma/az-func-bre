@@ -1,6 +1,9 @@
 ﻿using Az.Serverless.Bre.Func01.Factory;
 using Az.Serverless.Bre.Func01.Functions;
+using Az.Serverless.Bre.Func01.Handlers.Implementations;
 using Az.Serverless.Bre.Func01.Models;
+using Az.Serverless.Bre.Func01.Repositories.Implementations;
+using Az.Serverless.Bre.Tests.Utilities;
 using Azure.Core;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
@@ -13,6 +16,7 @@ using Microsoft.Extensions.Primitives;
 using Microsoft.Net.Http.Headers;
 using Moq;
 using System.ComponentModel.DataAnnotations;
+using System.Configuration;
 using System.Net.Mime;
 
 namespace Az.Serverless.Bre.Tests
@@ -28,8 +32,17 @@ namespace Az.Serverless.Bre.Tests
 
         public ExecuteRulesAsyncAzureFuncTests()
         {
-            _executeRules = new ExecuteRules();
+            string rulesConfigFileName = "FDInterestRates.json";
+            string ruleConfigPath = Path.GetFullPath($"..\\..\\..\\TestData\\RuleConfigs\\{rulesConfigFileName}");
+
+            var containerClient = BlobUtils.MockBlobContainerClient(ruleConfigPath);
+
+            var rulesStoreRepository = new BlobRulesStoreRepository(containerClient);
+
+            _executeRules = new ExecuteRules(rulesStoreRepository);
         }
+
+
 
         [Fact]
         public async void Execute_Rules_Sync_AzFunction_Should_Accept_HTTP_Request_And_ILogger_Instances()
@@ -181,6 +194,47 @@ namespace Az.Serverless.Bre.Tests
             ((ObjectResult)executionResult)
                 .Value.Should().BeOfType<List<List<ValidationResult>>>();
 
+        }
+
+
+        [Fact]
+        public void ExecuteRules_Constructor_Should_Throw_Argument_Null_Exeception_When_No_Rules_Repository_Is_Injected()
+        {
+            //Act
+            Action action = () =>
+            {
+                new ExecuteRules(null);
+            };
+
+            action.Should().ThrowExactly<ArgumentNullException>()
+                .WithMessage("Value cannot be null. (Parameter 'rulesStoreRepository')");
+
+
+        }
+
+        [Fact]
+        public async Task Execute_Rules_Async_Should_Throw_Not_Found_Result_When_Rules_Config_Is_Not_Found_In_Rules_Store()
+        {
+            //Arrange
+            var containerClient = BlobUtils.MockBlobContainerClient(null);
+
+            var rulesStoreRepository = new BlobRulesStoreRepository(containerClient);
+
+            var executeRules = new ExecuteRules(rulesStoreRepository);
+
+            var httpRequest = MockHttpRequest(true, true, true);
+
+            var expectedResult = ObjectResultFactory.Create(
+                statusCode: StatusCodes.Status404NotFound,
+                contentType: "application/json",
+                message: $"Unable to find FDInterestRates.json file in the rules store"
+                );
+
+            //Act
+            var executionResult = await executeRules.RunAsync(httpRequest, _logger);
+
+            //Assert
+            executionResult.Should().BeEquivalentTo(expectedResult);
         }
 
         private HttpRequest MockHttpRequest(bool provideWorkflowName, bool provideContentType, bool provideValidFormData)

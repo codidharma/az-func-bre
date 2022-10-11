@@ -1,5 +1,6 @@
 ﻿using Az.Serverless.Bre.Func01.Factory;
 using Az.Serverless.Bre.Func01.Models;
+using Az.Serverless.Bre.Func01.Repositories.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
@@ -8,6 +9,7 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Net.Http.Headers;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
@@ -19,6 +21,15 @@ namespace Az.Serverless.Bre.Func01.Functions
     public class ExecuteRules
     {
         private const string contentType = "application/json";
+
+        private readonly IRulesStoreRepository _rulesStoreRepository;
+
+        public ExecuteRules(IRulesStoreRepository rulesStoreRepository)
+        {
+            _rulesStoreRepository = rulesStoreRepository ??
+                throw new ArgumentNullException(nameof(rulesStoreRepository));
+
+        }
 
         [FunctionName($"{nameof(ExecuteRules)}Async")]
         public async Task<IActionResult> RunAsync(
@@ -90,8 +101,16 @@ namespace Az.Serverless.Bre.Func01.Functions
                     );
             }
 
-            
+            var rulesConfig = await _rulesStoreRepository.GetConfigAsStringAsync(xWorkflowNameHeader);
 
+            if (rulesConfig == null)
+            {
+                return ObjectResultFactory.Create(
+                    statusCode: StatusCodes.Status404NotFound,
+                    contentType: contentType,
+                    message: $"Unable to find {xWorkflowNameHeader} file in the rules store"
+                    );
+            }
             return null;
         }
 
