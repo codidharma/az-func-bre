@@ -1,13 +1,16 @@
 ﻿using Az.Serverless.Bre.Func01.Factory;
 using Az.Serverless.Bre.Func01.Functions;
 using Az.Serverless.Bre.Func01.Handlers.Implementations;
+using Az.Serverless.Bre.Func01.Handlers.Interfaces;
+using Az.Serverless.Bre.Func01.Mapper.Configuration;
 using Az.Serverless.Bre.Func01.Models;
 using Az.Serverless.Bre.Func01.Repositories.Implementations;
+using Az.Serverless.Bre.Func01.Repositories.Interfaces;
+using Az.Serverless.Bre.Func01.RuleEngineCustomizations;
 using Az.Serverless.Bre.Tests.Utilities;
-using Azure.Core;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Features;
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Logging;
@@ -15,9 +18,12 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Primitives;
 using Microsoft.Net.Http.Headers;
 using Moq;
+using RulesEngine.Models;
 using System.ComponentModel.DataAnnotations;
 using System.Configuration;
 using System.Net.Mime;
+using System.Text;
+using BRE = RulesEngine;
 
 namespace Az.Serverless.Bre.Tests
 {
@@ -32,17 +38,13 @@ namespace Az.Serverless.Bre.Tests
 
         public ExecuteRulesAsyncAzureFuncTests()
         {
-            string rulesConfigFileName = "FDInterestRates.json";
-            string ruleConfigPath = Path.GetFullPath($"..\\..\\..\\TestData\\RuleConfigs\\{rulesConfigFileName}");
+            IRulesStoreRepository rulesStoreRepository = SetupBlobRepositoryInstance();
+            IRulesEngineHandler rulesEngineHandler = SetupRulesEngineHandlerInstance();
 
-            var containerClient = BlobUtils.MockBlobContainerClient(ruleConfigPath);
-
-            var rulesStoreRepository = new BlobRulesStoreRepository(containerClient);
-
-            _executeRules = new ExecuteRules(rulesStoreRepository);
+            _executeRules = new ExecuteRules(rulesStoreRepository, rulesEngineHandler);
         }
 
-
+        
 
         [Fact]
         public async void Execute_Rules_Sync_AzFunction_Should_Accept_HTTP_Request_And_ILogger_Instances()
@@ -103,20 +105,20 @@ namespace Az.Serverless.Bre.Tests
                 .BeEquivalentTo<BadRequestObjectResult>(expectedResult);
         }
 
-        [Fact]
-        public async Task Execute_Rules_Async_Should_Work_Without_Throwing_Error_When_WorkflowName_Is_Provided_In_Header()
-        {
-            //Arrange
+        //[Fact]
+        //public async Task Execute_Rules_Async_Should_Work_Without_Throwing_Error_When_WorkflowName_Is_Provided_In_Header()
+        //{
+        //    //Arrange
 
-            var httpRequest = MockHttpRequest(true, true, true);
+        //    var httpRequest = MockHttpRequest(true, true, true);
 
-            //Act
-            var expectedResult = await _executeRules.RunAsync(httpRequest, _logger);
+        //    //Act
+        //    var expectedResult = await _executeRules.RunAsync(httpRequest, _logger);
 
-            //Assert
-            expectedResult.Should().BeNull();
+        //    //Assert
+        //    expectedResult.Should().BeNull();
             
-        }
+        //}
 
         [Fact]
         public async Task Execute_Rules_Async_Should_Throw_Unsupported_Media_Type_If_Content_Type_Header_Is_Missing()
@@ -142,20 +144,20 @@ namespace Az.Serverless.Bre.Tests
             
         }
 
-        [Fact]
-        public async Task Execute_Rules_Async_Should_Execute_Without_Throwing_Error_When_Correct_ContentType_Is_Provided_In_Header()
-        {
-            //Arrange
+        //[Fact]
+        //public async Task Execute_Rules_Async_Should_Execute_Without_Throwing_Error_When_Correct_ContentType_Is_Provided_In_Header()
+        //{
+        //    //Arrange
 
-            var httpRequest = MockHttpRequest(true, true, true);
+        //    var httpRequest = MockHttpRequest(true, true, true);
 
-            //Act
-            var executionResult = await _executeRules.RunAsync(httpRequest, _logger);
+        //    //Act
+        //    var executionResult = await _executeRules.RunAsync(httpRequest, _logger);
 
-            //Assert
-            executionResult.Should().BeNull();
+        //    //Assert
+        //    executionResult.Should().BeNull();
 
-        }
+        //}
 
         [Fact]
         public async Task Execute_Rules_Async_Should_Throw_Bad_Request_When_Served_With_No_Form_Data_Body()
@@ -203,14 +205,34 @@ namespace Az.Serverless.Bre.Tests
             //Act
             Action action = () =>
             {
-                new ExecuteRules(null);
+                new ExecuteRules(null, null);
             };
 
             action.Should().ThrowExactly<ArgumentNullException>()
                 .WithMessage("Value cannot be null. (Parameter 'rulesStoreRepository')");
 
-
         }
+
+        [Fact]
+        public void ExecuteRules_Constructor_Should_Throw_Argument_Null_Exeception_When_No_RulesEngine_Handler_Is_Injected()
+        {
+            var containerClient = BlobUtils.MockBlobContainerClient(null);
+
+            var rulesStoreRepository = new BlobRulesStoreRepository(containerClient);
+
+            Action action = () =>
+            {
+                new ExecuteRules(rulesStoreRepository, null);
+            };
+
+            //Assert
+            action.Should().ThrowExactly<ArgumentNullException>()
+                .WithMessage("Value cannot be null. (Parameter 'rulesEngineHandler')");
+            
+        }
+
+
+
 
         [Fact]
         public async Task Execute_Rules_Async_Should_Throw_Not_Found_Result_When_Rules_Config_Is_Not_Found_In_Rules_Store()
@@ -219,8 +241,9 @@ namespace Az.Serverless.Bre.Tests
             var containerClient = BlobUtils.MockBlobContainerClient(null);
 
             var rulesStoreRepository = new BlobRulesStoreRepository(containerClient);
+            var rulesEngineHandler = SetupRulesEngineHandlerInstance();
 
-            var executeRules = new ExecuteRules(rulesStoreRepository);
+            var executeRules = new ExecuteRules(rulesStoreRepository, rulesEngineHandler);
 
             var httpRequest = MockHttpRequest(true, true, true);
 
@@ -232,6 +255,36 @@ namespace Az.Serverless.Bre.Tests
 
             //Act
             var executionResult = await executeRules.RunAsync(httpRequest, _logger);
+
+            //Assert
+            executionResult.Should().BeEquivalentTo(expectedResult);
+        }
+
+        [Fact]
+        public async Task Execute_Rules_Async_Should_Work_Successfully_Without_Throwing_Error()
+        {
+            //Arrange
+
+            var rulesResult = new List<ExecutionResult> { new ExecutionResult { Result = 10.56 } };
+
+            var evaluationOutput = new EvaluationOutput
+            {
+                ErrorMessage = null,
+                IsEvaluationSuccessful = true,
+                ExecutionResults = rulesResult
+            };
+
+            var expectedResult = ObjectResultFactory.Create(
+                statusCode: StatusCodes.Status200OK,
+                contentType: "application/json",
+                message: evaluationOutput
+                );
+
+            var httpRequest = MockHttpRequest(true, true, true);
+
+            //Act
+            var executionResult = await _executeRules.RunAsync(httpRequest, _logger)
+                .ConfigureAwait(false);
 
             //Assert
             executionResult.Should().BeEquivalentTo(expectedResult);
@@ -260,9 +313,15 @@ namespace Az.Serverless.Bre.Tests
 
             string formKeyName = provideValidFormData ? "input" : string.Empty;
 
+            StringBuilder builder = new StringBuilder("{");
+            builder.Append("\"age\":65");
+            builder.Append(",");
+            builder.Append("\"durationInMonths\":12");
+            builder.Append("}");
+
             var formCollection = new FormCollection(
                     new Dictionary<string, StringValues>
-                    { {formKeyName, ""}}
+                    { {formKeyName, builder.ToString()}}
                     );
 
             _mockHttpRequest.Setup(x => x.ReadFormAsync(default))
@@ -273,6 +332,38 @@ namespace Az.Serverless.Bre.Tests
 
             return _mockHttpRequest.Object;
         }
+
+
+        #region PrivateMethods
+        private static BlobRulesStoreRepository SetupBlobRepositoryInstance()
+        {
+            string rulesConfigFileName = "FDInterestRates.json";
+            string ruleConfigPath = Path.GetFullPath($"..\\..\\..\\TestData\\RuleConfigs\\{rulesConfigFileName}");
+
+            var containerClient = BlobUtils.MockBlobContainerClient(ruleConfigPath);
+
+            var rulesStoreRepository = new BlobRulesStoreRepository(containerClient);
+            return rulesStoreRepository;
+        }
+
+        private static RulesEngineHandler SetupRulesEngineHandlerInstance()
+        {
+            var rulesEngineSetting = new ReSettings
+            {
+                CustomActions = new Dictionary<string, Func<BRE.Actions.ActionBase>>
+                {
+                    { "ExecutionResultCustomAction", () => new ExecutionResultCustomAction()}
+                }
+            };
+
+            var rulesEngine = new BRE.RulesEngine(reSettings: rulesEngineSetting);
+
+            var mapper = AutoMapperConfiguration.Initialize();
+
+            return new RulesEngineHandler(rulesEngine, mapper);
+
+        }
+        #endregion
 
     }
 }

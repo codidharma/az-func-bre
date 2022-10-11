@@ -1,4 +1,5 @@
 ﻿using Az.Serverless.Bre.Func01.Factory;
+using Az.Serverless.Bre.Func01.Handlers.Interfaces;
 using Az.Serverless.Bre.Func01.Models;
 using Az.Serverless.Bre.Func01.Repositories.Interfaces;
 using Microsoft.AspNetCore.Http;
@@ -23,11 +24,15 @@ namespace Az.Serverless.Bre.Func01.Functions
         private const string contentType = "application/json";
 
         private readonly IRulesStoreRepository _rulesStoreRepository;
+        private readonly IRulesEngineHandler _rulesEngineHandler;
 
-        public ExecuteRules(IRulesStoreRepository rulesStoreRepository)
+        public ExecuteRules(IRulesStoreRepository rulesStoreRepository,
+            IRulesEngineHandler rulesEngineHandler)
         {
             _rulesStoreRepository = rulesStoreRepository ??
                 throw new ArgumentNullException(nameof(rulesStoreRepository));
+            _rulesEngineHandler = rulesEngineHandler ??
+                throw new ArgumentNullException(nameof(rulesEngineHandler));    
 
         }
 
@@ -81,15 +86,19 @@ namespace Az.Serverless.Bre.Func01.Functions
             }
 
             var aggregatedValidationErrors = new List<List<ValidationResult>>();
+            var evaluationInputs = new List<EvaluationInputParameter>();
 
             foreach (var formPart in formData)
             {
-                var evaluationInput = new EvaluationInputParameter(formPart.Key, formPart.Value);
+                var evaluationInput = new EvaluationInputParameter(formPart.Key, formPart.Value.ToString());
 
                 bool isValid = evaluationInput.Validate(out List<ValidationResult> evaluationErrors);
 
-                if(!isValid)
+                if (!isValid)
                     aggregatedValidationErrors.Add(evaluationErrors);
+
+                else
+                    evaluationInputs.Add(evaluationInput);
             }
 
             if (aggregatedValidationErrors.Count > 0)
@@ -111,7 +120,16 @@ namespace Az.Serverless.Bre.Func01.Functions
                     message: $"Unable to find {xWorkflowNameHeader} file in the rules store"
                     );
             }
-            return null;
+
+            var rulesExecutionResult = await _rulesEngineHandler
+                .ExecuteRulesAsync(rulesConfig, evaluationInputs.ToArray());
+
+            return ObjectResultFactory.Create(
+                statusCode: StatusCodes.Status200OK,
+                contentType: contentType,
+                message: rulesExecutionResult
+                );
+
         }
 
     }
