@@ -53,6 +53,19 @@ namespace Az.Serverless.Bre.Func01.Functions
 
             }
 
+            var formData = await request.ReadFormAsync()
+                .ConfigureAwait(false);
+
+            if (formData == null || formData.Count == 0)
+            {
+                return ObjectResultFactory
+                    .Create(
+                    statusCode: 400,
+                    contentType: contentType,
+                    message: "Form Data is required"
+                    );
+            }
+
             return null;
         }
 

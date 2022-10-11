@@ -1,7 +1,9 @@
-﻿using Az.Serverless.Bre.Func01.Functions;
+﻿using Az.Serverless.Bre.Func01.Factory;
+using Az.Serverless.Bre.Func01.Functions;
 using Azure.Core;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Logging;
@@ -30,7 +32,7 @@ namespace Az.Serverless.Bre.Tests
         public async void Execute_Rules_Sync_AzFunction_Should_Accept_HTTP_Request_And_ILogger_Instances()
         {
             //Arrange
-            var httpRequest = MockHttpRequest(false, false);
+            var httpRequest = MockHttpRequest(false, false, false);
 
             //Act
             await _executeRules.RunAsync(httpRequest, _logger);
@@ -50,7 +52,7 @@ namespace Az.Serverless.Bre.Tests
                 }
             };
 
-            var httpRequest = MockHttpRequest(false, false);
+            var httpRequest = MockHttpRequest(false, false, false);
 
             //Act
             var executionResult = await _executeRules.RunAsync(httpRequest, _logger);
@@ -75,7 +77,7 @@ namespace Az.Serverless.Bre.Tests
                 }
             };
 
-            var httpRequest = MockHttpRequest(false, false);
+            var httpRequest = MockHttpRequest(false, false, false);
 
             //Act
             var executionResult = await _executeRules.RunAsync(httpRequest, _logger);
@@ -90,7 +92,7 @@ namespace Az.Serverless.Bre.Tests
         {
             //Arrange
 
-            var httpRequest = MockHttpRequest(true, true);
+            var httpRequest = MockHttpRequest(true, true, true);
 
             //Act
             var expectedResult = await _executeRules.RunAsync(httpRequest, _logger);
@@ -114,7 +116,7 @@ namespace Az.Serverless.Bre.Tests
                 }
             };
 
-            var httpRequest = MockHttpRequest(true, false);
+            var httpRequest = MockHttpRequest(true, false, false);
 
             //Act
             var executionResult = await _executeRules.RunAsync(httpRequest, _logger);
@@ -129,7 +131,7 @@ namespace Az.Serverless.Bre.Tests
         {
             //Arrange
 
-            var httpRequest = MockHttpRequest(true, true);
+            var httpRequest = MockHttpRequest(true, true, true);
 
             //Act
             var executionResult = await _executeRules.RunAsync(httpRequest, _logger);
@@ -139,7 +141,28 @@ namespace Az.Serverless.Bre.Tests
 
         }
 
-        private HttpRequest MockHttpRequest(bool provideWorkflowName, bool provideContentType)
+        [Fact]
+        public async Task Execute_Rules_Async_Should_Throw_Bad_Request_When_Served_With_No_Form_Data_Body()
+        {
+            //Arrange
+            var expectedResult = ObjectResultFactory
+                .Create(
+                statusCode: 400,
+                contentType: "application/json",
+                message: "Form Data is required"
+                );
+
+            var httpRequest = MockHttpRequest(true, true, false);
+
+            //Act
+            var executionResult = await _executeRules.RunAsync(httpRequest, _logger)
+                .ConfigureAwait(false);
+
+            //Assert
+            executionResult.Should().BeEquivalentTo(executionResult);
+        }
+
+        private HttpRequest MockHttpRequest(bool provideWorkflowName, bool provideContentType, bool provideFormData)
         {
             _mockHttpRequest = new Mock<HttpRequest>();
 
@@ -158,6 +181,21 @@ namespace Az.Serverless.Bre.Tests
                     .Returns("multipart/form-data");
                 _mockHttpRequest.Setup(x => x.HasFormContentType)
                     .Returns(true);
+            }
+
+            if (provideFormData)
+            {
+
+
+                var formCollection = new FormCollection(
+                    new Dictionary<string, Microsoft.Extensions.Primitives.StringValues>
+                    { {"input", ""}}
+                    );
+                _mockHttpRequest.Setup(x => x.Form)
+                    .Returns(formCollection);
+                _mockHttpRequest.Setup(x => x.ReadFormAsync(default(CancellationToken)))
+                    .ReturnsAsync(formCollection);
+                
             }
 
 
