@@ -4,12 +4,9 @@ using Az.Serverless.Bre.Func01.Models;
 using Az.Serverless.Bre.Func01.Repositories.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Net.Http.Headers;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -17,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace Az.Serverless.Bre.Func01.Functions
 {
-    
+
 
     public class ExecuteRules
     {
@@ -32,7 +29,7 @@ namespace Az.Serverless.Bre.Func01.Functions
             _rulesStoreRepository = rulesStoreRepository ??
                 throw new ArgumentNullException(nameof(rulesStoreRepository));
             _rulesEngineHandler = rulesEngineHandler ??
-                throw new ArgumentNullException(nameof(rulesEngineHandler));    
+                throw new ArgumentNullException(nameof(rulesEngineHandler));
 
         }
 
@@ -44,7 +41,7 @@ namespace Az.Serverless.Bre.Func01.Functions
 
             var requestHeaders = request.Headers;
 
-            
+
             var xWorkflowNameHeader = requestHeaders["x-workflow-name"];
 
             if (string.IsNullOrEmpty(xWorkflowNameHeader))
@@ -59,7 +56,7 @@ namespace Az.Serverless.Bre.Func01.Functions
             }
 
             var contentTypeHeader = request.ContentType;
-            
+
 
             if (!request.HasFormContentType)
             {

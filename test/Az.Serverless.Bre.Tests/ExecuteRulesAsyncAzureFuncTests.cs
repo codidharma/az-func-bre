@@ -20,8 +20,6 @@ using Microsoft.Net.Http.Headers;
 using Moq;
 using RulesEngine.Models;
 using System.ComponentModel.DataAnnotations;
-using System.Configuration;
-using System.Net.Mime;
 using System.Text;
 using BRE = RulesEngine;
 
@@ -44,7 +42,7 @@ namespace Az.Serverless.Bre.Tests
             _executeRules = new ExecuteRules(rulesStoreRepository, rulesEngineHandler);
         }
 
-        
+
 
         [Fact]
         public async void Execute_Rules_Sync_AzFunction_Should_Accept_HTTP_Request_And_ILogger_Instances()
@@ -117,7 +115,7 @@ namespace Az.Serverless.Bre.Tests
 
         //    //Assert
         //    expectedResult.Should().BeNull();
-            
+
         //}
 
         [Fact]
@@ -141,7 +139,7 @@ namespace Az.Serverless.Bre.Tests
 
             //Assert
             executionResult.Should().BeEquivalentTo(expectedResult);
-            
+
         }
 
         //[Fact]
@@ -228,7 +226,7 @@ namespace Az.Serverless.Bre.Tests
             //Assert
             action.Should().ThrowExactly<ArgumentNullException>()
                 .WithMessage("Value cannot be null. (Parameter 'rulesEngineHandler')");
-            
+
         }
 
 

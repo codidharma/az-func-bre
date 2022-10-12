@@ -32,7 +32,7 @@ namespace Az.Serverless.Bre.Tests
             actualObject
                 .Should().BeEquivalentTo(expectedObject);
 
-            
+
         }
     }
 }

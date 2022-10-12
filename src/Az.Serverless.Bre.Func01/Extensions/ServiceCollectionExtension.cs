@@ -8,14 +8,10 @@ using Azure.Storage.Blobs;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using RulesEngine;
 using RulesEngine.Interfaces;
 using RulesEngine.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Az.Serverless.Bre.Func01.Extensions
 {
@@ -36,7 +32,7 @@ namespace Az.Serverless.Bre.Func01.Extensions
             var blobStoreConfig = (serviceProvider.GetService<IOptions<BlobRulesStoreConfiguration>>())
                 .Value;
 
-            services.AddSingleton<BlobContainerClient>(x => 
+            services.AddSingleton<BlobContainerClient>(x =>
                 new BlobContainerClient(
                     blobContainerName: blobStoreConfig.ContainerName,
                     connectionString: blobStoreConfig.ConnectionString)
@@ -45,7 +41,7 @@ namespace Az.Serverless.Bre.Func01.Extensions
             services.AddScoped<IRulesStoreRepository, BlobRulesStoreRepository>();
 
             return services;
-            
+
         }
 
         public static IServiceCollection AddRulesEngine(this IServiceCollection services)

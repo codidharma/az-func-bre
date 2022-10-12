@@ -12,7 +12,7 @@ namespace Az.Serverless.Bre.Func01
     public class Startup : FunctionsStartup
     {
         public override void Configure(IFunctionsHostBuilder builder)
-        {   
+        {
             IMapper mapper = AutoMapperConfiguration.Initialize();
 
             builder.Services
