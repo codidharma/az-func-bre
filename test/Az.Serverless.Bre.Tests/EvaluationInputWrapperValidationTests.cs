@@ -1,11 +1,6 @@
 ﻿using Az.Serverless.Bre.Func01.Models;
 using Az.Serverless.Bre.Func01.Validators;
 using FluentAssertions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Az.Serverless.Bre.Tests
 {

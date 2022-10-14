@@ -16,14 +16,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.Extensions.Primitives;
 using Microsoft.Net.Http.Headers;
 using Moq;
 using Newtonsoft.Json;
 using RulesEngine.Models;
 using System.Text;
 using BRE = RulesEngine;
-using ValidationResult = FluentValidation.Results.ValidationResult;
 
 namespace Az.Serverless.Bre.Tests
 {
@@ -43,7 +41,7 @@ namespace Az.Serverless.Bre.Tests
             IRulesEngineHandler rulesEngineHandler = SetupRulesEngineHandlerInstance();
             var evalInputWrapperValidator = new EvaluationInputWrapperValidator();
 
-            _executeRules = new ExecuteRules(rulesStoreRepository, rulesEngineHandler,evalInputWrapperValidator);
+            _executeRules = new ExecuteRules(rulesStoreRepository, rulesEngineHandler, evalInputWrapperValidator);
         }
 
 
@@ -173,7 +171,7 @@ namespace Az.Serverless.Bre.Tests
                 .ConfigureAwait(false);
 
             //Assery
-            
+
         }
 
         [Fact]
@@ -181,7 +179,7 @@ namespace Az.Serverless.Bre.Tests
         {
             //Arrange
             int expectedStatusCode = 400;
-           
+
             var httpRequest = MockHttpRequest(true, true, false);
 
             //Act
@@ -193,27 +191,8 @@ namespace Az.Serverless.Bre.Tests
                 .Should().Be(expectedStatusCode);
             ((ObjectResult)executionResult).Value
                 .Should().BeOfType<List<ValidationFailure>>();
-            
+
         }
-
-        //[Fact]
-        //public async Task Execute_Rules_Async_Should_Throw_bad_Object_Result_When_Form_Data_Cannot_Parse_to_Eval_input()
-        //{
-        //    //Arrange
-        //    var httpRequest = MockHttpRequest(true, true, false);
-
-        //    //Act
-        //    var executionResult = await _executeRules.RunAsync(httpRequest, _logger);
-
-        //    //Assert
-        //    executionResult.Should().BeOfType<ObjectResult>();
-        //    ((ObjectResult)executionResult)
-        //        .StatusCode.Should().Be(StatusCodes.Status400BadRequest);
-        //    ((ObjectResult)executionResult)
-        //        .Value.Should().BeOfType<List<List<ValidationResult>>>();
-
-        //}
-
 
         [Fact]
         public void ExecuteRules_Constructor_Should_Throw_Argument_Null_Exeception_When_No_Rules_Repository_Is_Injected()
@@ -221,7 +200,7 @@ namespace Az.Serverless.Bre.Tests
             //Act
             Action action = () =>
             {
-                new ExecuteRules(null, null, null) ;
+                new ExecuteRules(null, null, null);
             };
 
             action.Should().ThrowExactly<ArgumentNullException>()
@@ -338,7 +317,7 @@ namespace Az.Serverless.Bre.Tests
             {
                 _mockHttpRequest.Setup(x => x.ContentType)
                     .Returns("application/json");
-                
+
             }
 
             string body = string.Empty;
@@ -372,7 +351,7 @@ namespace Az.Serverless.Bre.Tests
             _mockHttpRequest.Setup(x => x.Body)
                 .Returns(_memoryStream);
 
-            
+
             _mockHttpRequest.Setup(x => x.Headers)
                 .Returns(headerDict);
 

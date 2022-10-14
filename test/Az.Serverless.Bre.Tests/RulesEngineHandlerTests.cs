@@ -9,7 +9,6 @@ using Newtonsoft.Json;
 using RulesEngine.Exceptions;
 using RulesEngine.Interfaces;
 using RulesEngine.Models;
-using System.Dynamic;
 using System.Text;
 using BRE = RulesEngine;
 

@@ -11,12 +11,9 @@ namespace Az.Serverless.Bre.Func01.Mapper.Profiles
     {
         public RuleParameterMappingProfile()
         {
-            //CreateMap<EvaluationInput, RuleParameter>()
-              //  .ConvertUsing(x => new RuleParameter(x.Name, x.StringifiedJsonMessage));
-
-
+            
             CreateMap<EvaluationInput, RuleParameter>()
-                .ConstructUsing(x => new RuleParameter(x.Name, 
+                .ConstructUsing(x => new RuleParameter(x.Name,
                 JsonConvert.DeserializeObject<ExpandoObject>(
                 x.StringifiedJsonMessage,
                 new ExpandoObjectConverter()

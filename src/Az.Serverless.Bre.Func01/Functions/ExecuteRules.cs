@@ -3,7 +3,6 @@ using Az.Serverless.Bre.Func01.Handlers.Interfaces;
 using Az.Serverless.Bre.Func01.Models;
 using Az.Serverless.Bre.Func01.Repositories.Interfaces;
 using Az.Serverless.Bre.Func01.Validators;
-using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
@@ -11,8 +10,6 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -67,7 +64,7 @@ namespace Az.Serverless.Bre.Func01.Functions
 
             var contentTypeHeader = request.ContentType;
 
-            if(string.IsNullOrEmpty(contentTypeHeader) || !contentTypeHeader.Equals(contentType))
+            if (string.IsNullOrEmpty(contentTypeHeader) || !contentTypeHeader.Equals(contentType))
             {
                 return ObjectResultFactory
                     .Create(

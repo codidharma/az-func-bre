@@ -2,7 +2,6 @@
 using Az.Serverless.Bre.Func01.Validators;
 using FluentAssertions;
 using System.ComponentModel.DataAnnotations;
-using System.Dynamic;
 using System.Text;
 
 namespace Az.Serverless.Bre.Tests
@@ -12,7 +11,6 @@ namespace Az.Serverless.Bre.Tests
         [Theory]
         [InlineData(null)]
         [InlineData("")]
-     
         public async Task Validator_Should_Return_Failed_Validation_Details_When_Name_Property_Is_NullOrEmpty(string name)
         {
             //Arrange 
@@ -33,7 +31,7 @@ namespace Az.Serverless.Bre.Tests
             result.Errors.Should().HaveCount(1);
             result.Errors[0].ErrorMessage.Should()
                 .BeEquivalentTo("'Name' must not be empty.");
-            
+
 
         }
 
@@ -79,31 +77,6 @@ namespace Az.Serverless.Bre.Tests
             results.Errors[1].ErrorMessage
                 .Should().BeEquivalentTo("'Stringified Json Message' must not be empty.");
         }
-
-        //[Theory]
-        //[InlineData(null)]
-        //[InlineData("")]
-        //public void Validate_Should_Return_False_And_Validation_Error_When_Key_Property_IsNullOrEmpty(string name)
-        //{
-        //    //Arrange
-        //    EvaluationInput evaluationInput = new(
-        //        key: null, value: new ExpandoObject()
-        //        );
-
-        //    List<ValidationResult> errors;
-
-        //    //Act
-
-        //    bool isValid = evaluationInput.Validate(out errors);
-
-        //    //Assert
-
-        //    isValid.Should().BeFalse();
-        //    errors.Count.Should().Be(1);
-        //    errors[0].ErrorMessage
-        //        .Should().BeEquivalentTo("The Name field is required.");
-
-        //}
 
         [Fact]
         public void Validate_Should_Return_False_And_Validation_Error_When_Value_Property_Is_Null()
@@ -170,8 +143,6 @@ namespace Az.Serverless.Bre.Tests
             errors.Count.Should().Be(0);
 
         }
-
-        
 
     }
 }
