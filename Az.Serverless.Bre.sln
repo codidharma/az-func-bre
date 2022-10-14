@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Az.Serverless.Bre.Tests", "test\Az.Serverless.Bre.Tests\Az.Serverless.Bre.Tests.csproj", "{A54EC584-7081-402F-A944-F286E9E05A05}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Az.Serverless.Bre.Tests", "test\Az.Serverless.Bre.Tests\Az.Serverless.Bre.Tests.csproj", "{A54EC584-7081-402F-A944-F286E9E05A05}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Az.Serverless.Bre.Func01", "src\Az.Serverless.Bre.Func01\Az.Serverless.Bre.Func01.csproj", "{18B9DCBE-FA6B-4BAA-BC09-6DF04D4A1749}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Az.Serverless.Bre.Func01", "src\Az.Serverless.Bre.Func01\Az.Serverless.Bre.Func01.csproj", "{18B9DCBE-FA6B-4BAA-BC09-6DF04D4A1749}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

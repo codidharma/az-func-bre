@@ -7,10 +7,11 @@ using Az.Serverless.Bre.Func01.Models;
 using Az.Serverless.Bre.Func01.Repositories.Implementations;
 using Az.Serverless.Bre.Func01.Repositories.Interfaces;
 using Az.Serverless.Bre.Func01.RuleEngineCustomizations;
+using Az.Serverless.Bre.Func01.Validators;
 using Az.Serverless.Bre.Tests.Utilities;
 using FluentAssertions;
+using FluentValidation.Results;
 using Microsoft.AspNetCore.Http;
-
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Logging;
@@ -18,10 +19,11 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Primitives;
 using Microsoft.Net.Http.Headers;
 using Moq;
+using Newtonsoft.Json;
 using RulesEngine.Models;
-using System.ComponentModel.DataAnnotations;
 using System.Text;
 using BRE = RulesEngine;
+using ValidationResult = FluentValidation.Results.ValidationResult;
 
 namespace Az.Serverless.Bre.Tests
 {
@@ -33,13 +35,15 @@ namespace Az.Serverless.Bre.Tests
             .CreateLogger<ExecuteRulesAsyncAzureFuncTests>();
 
         private Mock<HttpRequest> _mockHttpRequest;
+        private MemoryStream _memoryStream;
 
         public ExecuteRulesAsyncAzureFuncTests()
         {
             IRulesStoreRepository rulesStoreRepository = SetupBlobRepositoryInstance();
             IRulesEngineHandler rulesEngineHandler = SetupRulesEngineHandlerInstance();
+            var evalInputWrapperValidator = new EvaluationInputWrapperValidator();
 
-            _executeRules = new ExecuteRules(rulesStoreRepository, rulesEngineHandler);
+            _executeRules = new ExecuteRules(rulesStoreRepository, rulesEngineHandler,evalInputWrapperValidator);
         }
 
 
@@ -122,7 +126,7 @@ namespace Az.Serverless.Bre.Tests
         public async Task Execute_Rules_Async_Should_Throw_Unsupported_Media_Type_If_Content_Type_Header_Is_Missing()
         {
             //Arrange
-            var expectedResult = new ObjectResult("Content-Type header is mandatory and should be 'multipart/form-data'")
+            var expectedResult = new ObjectResult("Content-Type header is mandatory and should be 'application/json'")
             {
                 StatusCode = StatusCodes.Status415UnsupportedMediaType,
                 ContentTypes = new MediaTypeCollection
@@ -158,15 +162,9 @@ namespace Az.Serverless.Bre.Tests
         //}
 
         [Fact]
-        public async Task Execute_Rules_Async_Should_Throw_Bad_Request_When_Served_With_No_Form_Data_Body()
+        public async Task Execute_Rules_Should_Throw_Bad_Request_Error_When_Model_Validation_Fails()
         {
             //Arrange
-            var expectedResult = ObjectResultFactory
-                .Create(
-                statusCode: 400,
-                contentType: "application/json",
-                message: "Form Data is required"
-                );
 
             var httpRequest = MockHttpRequest(true, true, false);
 
@@ -174,27 +172,47 @@ namespace Az.Serverless.Bre.Tests
             var executionResult = await _executeRules.RunAsync(httpRequest, _logger)
                 .ConfigureAwait(false);
 
-            //Assert
-            executionResult.Should().BeEquivalentTo(executionResult);
+            //Assery
+            
         }
 
         [Fact]
-        public async Task Execute_Rules_Async_Should_Throw_bad_Object_Result_When_Form_Data_Cannot_Parse_to_Eval_input()
+        public async Task ExecuteRulesAsync_Should_Throw_Bad_Object_Result_When_Input_Validation_Fails()
         {
             //Arrange
+            int expectedStatusCode = 400;
+           
             var httpRequest = MockHttpRequest(true, true, false);
 
             //Act
-            var executionResult = await _executeRules.RunAsync(httpRequest, _logger);
+            var executionResult = await _executeRules.RunAsync(httpRequest, _logger)
+                .ConfigureAwait(false);
 
             //Assert
-            executionResult.Should().BeOfType<ObjectResult>();
-            ((ObjectResult)executionResult)
-                .StatusCode.Should().Be(StatusCodes.Status400BadRequest);
-            ((ObjectResult)executionResult)
-                .Value.Should().BeOfType<List<List<ValidationResult>>>();
-
+            ((ObjectResult)executionResult).StatusCode
+                .Should().Be(expectedStatusCode);
+            ((ObjectResult)executionResult).Value
+                .Should().BeOfType<List<ValidationFailure>>();
+            
         }
+
+        //[Fact]
+        //public async Task Execute_Rules_Async_Should_Throw_bad_Object_Result_When_Form_Data_Cannot_Parse_to_Eval_input()
+        //{
+        //    //Arrange
+        //    var httpRequest = MockHttpRequest(true, true, false);
+
+        //    //Act
+        //    var executionResult = await _executeRules.RunAsync(httpRequest, _logger);
+
+        //    //Assert
+        //    executionResult.Should().BeOfType<ObjectResult>();
+        //    ((ObjectResult)executionResult)
+        //        .StatusCode.Should().Be(StatusCodes.Status400BadRequest);
+        //    ((ObjectResult)executionResult)
+        //        .Value.Should().BeOfType<List<List<ValidationResult>>>();
+
+        //}
 
 
         [Fact]
@@ -203,7 +221,7 @@ namespace Az.Serverless.Bre.Tests
             //Act
             Action action = () =>
             {
-                new ExecuteRules(null, null);
+                new ExecuteRules(null, null, null) ;
             };
 
             action.Should().ThrowExactly<ArgumentNullException>()
@@ -220,7 +238,7 @@ namespace Az.Serverless.Bre.Tests
 
             Action action = () =>
             {
-                new ExecuteRules(rulesStoreRepository, null);
+                new ExecuteRules(rulesStoreRepository, null, null);
             };
 
             //Assert
@@ -229,6 +247,20 @@ namespace Az.Serverless.Bre.Tests
 
         }
 
+        [Fact]
+        public void ExecuteRules_Constructor_Should_Throw_Argument_Null_Exeception_When_No_ModelValidator_Is_Injected()
+        {
+            IRulesStoreRepository rulesStoreRepository = SetupBlobRepositoryInstance();
+            IRulesEngineHandler rulesEngineHandler = SetupRulesEngineHandlerInstance();
+
+            Action action = () =>
+            {
+                new ExecuteRules(rulesStoreRepository, rulesEngineHandler, null);
+            };
+
+            action.Should().ThrowExactly<ArgumentNullException>()
+               .WithMessage("Value cannot be null. (Parameter 'evalInputWrapperValidator')");
+        }
 
 
 
@@ -240,8 +272,9 @@ namespace Az.Serverless.Bre.Tests
 
             var rulesStoreRepository = new BlobRulesStoreRepository(containerClient);
             var rulesEngineHandler = SetupRulesEngineHandlerInstance();
+            var evalInputWrapperValidator = new EvaluationInputWrapperValidator();
 
-            var executeRules = new ExecuteRules(rulesStoreRepository, rulesEngineHandler);
+            var executeRules = new ExecuteRules(rulesStoreRepository, rulesEngineHandler, evalInputWrapperValidator);
 
             var httpRequest = MockHttpRequest(true, true, true);
 
@@ -288,7 +321,7 @@ namespace Az.Serverless.Bre.Tests
             executionResult.Should().BeEquivalentTo(expectedResult);
         }
 
-        private HttpRequest MockHttpRequest(bool provideWorkflowName, bool provideContentType, bool provideValidFormData)
+        private HttpRequest MockHttpRequest(bool provideWorkflowName, bool provideContentType, bool provideValidBody)
         {
             _mockHttpRequest = new Mock<HttpRequest>();
 
@@ -304,27 +337,42 @@ namespace Az.Serverless.Bre.Tests
             if (provideContentType)
             {
                 _mockHttpRequest.Setup(x => x.ContentType)
-                    .Returns("multipart/form-data");
-                _mockHttpRequest.Setup(x => x.HasFormContentType)
-                    .Returns(true);
+                    .Returns("application/json");
+                
             }
 
-            string formKeyName = provideValidFormData ? "input" : string.Empty;
+            string body = string.Empty;
 
-            StringBuilder builder = new StringBuilder("{");
-            builder.Append("\"age\":65");
-            builder.Append(",");
-            builder.Append("\"durationInMonths\":12");
-            builder.Append("}");
+            if (provideValidBody)
+            {
+                StringBuilder builder = new StringBuilder("{");
+                builder.Append("\"age\":65");
+                builder.Append(",");
+                builder.Append("\"durationInMonths\":12");
+                builder.Append("}");
 
-            var formCollection = new FormCollection(
-                    new Dictionary<string, StringValues>
-                    { {formKeyName, builder.ToString()}}
-                    );
+                body = builder.ToString();
+            }
 
-            _mockHttpRequest.Setup(x => x.ReadFormAsync(default))
-                .ReturnsAsync(formCollection);
+            var evaluationWrapper = new EvaluationInputWrapper
+            {
+                EvaluationInputs = new List<EvaluationInput>
+                {
+                    new EvaluationInput("input", body)
+                }
+            };
 
+            var jsonMessage = JsonConvert.SerializeObject(evaluationWrapper);
+            var bytesArray = Encoding.ASCII.GetBytes(jsonMessage);
+
+            _memoryStream = new MemoryStream(bytesArray);
+            _memoryStream.Flush();
+            _memoryStream.Position = 0;
+
+            _mockHttpRequest.Setup(x => x.Body)
+                .Returns(_memoryStream);
+
+            
             _mockHttpRequest.Setup(x => x.Headers)
                 .Returns(headerDict);
 

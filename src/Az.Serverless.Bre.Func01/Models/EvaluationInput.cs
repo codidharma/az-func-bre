@@ -11,9 +11,11 @@ namespace Az.Serverless.Bre.Func01.Models
 
         [Required]
         [MinLength(1)]
+        [JsonProperty(PropertyName = "name")]
         public string Name { get; private set; }
 
         [Required]
+        [JsonProperty(PropertyName = "stringifiedJsonMessage")]
         public object StringifiedJsonMessage { get; private set; }
 
         public EvaluationInput(string key, object value)
