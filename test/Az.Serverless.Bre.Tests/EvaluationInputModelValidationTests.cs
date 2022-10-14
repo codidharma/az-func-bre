@@ -80,30 +80,30 @@ namespace Az.Serverless.Bre.Tests
                 .Should().BeEquivalentTo("'Stringified Json Message' must not be empty.");
         }
 
-        [Theory]
-        [InlineData(null)]
-        [InlineData("")]
-        public void Validate_Should_Return_False_And_Validation_Error_When_Key_Property_IsNullOrEmpty(string name)
-        {
-            //Arrange
-            EvaluationInput evaluationInput = new(
-                key: null, value: new ExpandoObject()
-                );
+        //[Theory]
+        //[InlineData(null)]
+        //[InlineData("")]
+        //public void Validate_Should_Return_False_And_Validation_Error_When_Key_Property_IsNullOrEmpty(string name)
+        //{
+        //    //Arrange
+        //    EvaluationInput evaluationInput = new(
+        //        key: null, value: new ExpandoObject()
+        //        );
 
-            List<ValidationResult> errors;
+        //    List<ValidationResult> errors;
 
-            //Act
+        //    //Act
 
-            bool isValid = evaluationInput.Validate(out errors);
+        //    bool isValid = evaluationInput.Validate(out errors);
 
-            //Assert
+        //    //Assert
 
-            isValid.Should().BeFalse();
-            errors.Count.Should().Be(1);
-            errors[0].ErrorMessage
-                .Should().BeEquivalentTo("The Name field is required.");
+        //    isValid.Should().BeFalse();
+        //    errors.Count.Should().Be(1);
+        //    errors[0].ErrorMessage
+        //        .Should().BeEquivalentTo("The Name field is required.");
 
-        }
+        //}
 
         [Fact]
         public void Validate_Should_Return_False_And_Validation_Error_When_Value_Property_Is_Null()
@@ -171,20 +171,7 @@ namespace Az.Serverless.Bre.Tests
 
         }
 
-        [Fact]
-        public void EvaluationInputParameter_Constructor_Should_Convert_Json_String_To_Expando_Object()
-        {
-            //Arrange
-            EvaluationInput evaluationInput = new(
-                key: "Input", value: "{}");
-
-
-            //Act
-
-            evaluationInput.StringifiedJsonMessage
-                .Should().BeOfType<ExpandoObject>();
-
-        }
+        
 
     }
 }

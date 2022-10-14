@@ -1,6 +1,9 @@
 ﻿using AutoMapper;
 using Az.Serverless.Bre.Func01.Models;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using RulesEngine.Models;
+using System.Dynamic;
 
 namespace Az.Serverless.Bre.Func01.Mapper.Profiles
 {
@@ -8,8 +11,16 @@ namespace Az.Serverless.Bre.Func01.Mapper.Profiles
     {
         public RuleParameterMappingProfile()
         {
+            //CreateMap<EvaluationInput, RuleParameter>()
+              //  .ConvertUsing(x => new RuleParameter(x.Name, x.StringifiedJsonMessage));
+
+
             CreateMap<EvaluationInput, RuleParameter>()
-                .ConvertUsing(x => new RuleParameter(x.Name, x.StringifiedJsonMessage));
+                .ConstructUsing(x => new RuleParameter(x.Name, 
+                JsonConvert.DeserializeObject<ExpandoObject>(
+                x.StringifiedJsonMessage,
+                new ExpandoObjectConverter()
+                )));
         }
     }
 }

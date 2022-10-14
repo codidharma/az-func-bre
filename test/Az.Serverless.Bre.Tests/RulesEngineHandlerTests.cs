@@ -119,12 +119,11 @@ namespace Az.Serverless.Bre.Tests
         public async Task ExecuteRulesAsync_Should_Throw_ArgumentNullException_When_Rules_Config_Is_Empty_String()
         {
             //Arrange
-            dynamic data = new ExpandoObject();
-            data.age = 65;
+            string req = "{\"age\":65}";
 
             var evaluationInputs = new EvaluationInput[]
                 {
-                    new EvaluationInput(key: "input", value: data)
+                    new EvaluationInput(key: "input", value: req)
                 };
 
 

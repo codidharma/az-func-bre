@@ -12,26 +12,27 @@ namespace Az.Serverless.Bre.Func01.Models
         [Required]
         [MinLength(1)]
         [JsonProperty(PropertyName = "name")]
-        public string Name { get; private set; }
+        public string Name { get; set; }
 
         [Required]
         [JsonProperty(PropertyName = "stringifiedJsonMessage")]
-        public object StringifiedJsonMessage { get; private set; }
+        public string StringifiedJsonMessage { get; set; }
 
         public EvaluationInput(string key, object value)
         {
             Name = key;
 
-            if (value != null && value.GetType() == typeof(string))
-            {
-                StringifiedJsonMessage = ConvertJsonToExpandoObject(value);
-            }
-            else
-            {
-                StringifiedJsonMessage = value;
-            }
+            //if (value != null && value.GetType() == typeof(string))
+            //{
+            //    StringifiedJsonMessage = ConvertJsonToExpandoObject(value);
+            //}
+            //else
+            //{
+            //    StringifiedJsonMessage = value;
+            //}
 
             //Value = value;
+            StringifiedJsonMessage = (string)value;
         }
 
         public bool Validate(out List<ValidationResult> validationResults)
