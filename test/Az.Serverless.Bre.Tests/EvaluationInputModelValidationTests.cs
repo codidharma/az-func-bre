@@ -20,7 +20,12 @@ namespace Az.Serverless.Bre.Tests
             builder.Append("\"durationInMonths\":12");
             builder.Append("}");
 
-            var evaluationInput = new EvaluationInput(name, builder.ToString());
+            var evaluationInput = new EvaluationInput
+            {
+                Name = name,
+                StringifiedJsonMessage = builder.ToString()
+            };
+                
             var validator = new EvaluationInputValidator();
 
             //Act
@@ -39,7 +44,11 @@ namespace Az.Serverless.Bre.Tests
         public async Task Validator_Should_Return_Failed_Validation_Details_When_StringifiedJsonMessage_Property_Is_Null()
         {
             //Arrange
-            var evaluationInput = new EvaluationInput("input", null);
+            var evaluationInput = new EvaluationInput
+            {
+                Name = "input",
+                StringifiedJsonMessage = null
+            };
             var validator = new EvaluationInputValidator();
 
             //Act
@@ -62,7 +71,11 @@ namespace Az.Serverless.Bre.Tests
             (string name, string jsonMessage)
         {
             //Arrange
-            var evaluationInput = new EvaluationInput(name, jsonMessage);
+            var evaluationInput = new EvaluationInput
+            {
+                Name = name,
+                StringifiedJsonMessage = jsonMessage
+            };
 
             var validator = new EvaluationInputValidator();
 
@@ -78,71 +91,6 @@ namespace Az.Serverless.Bre.Tests
                 .Should().BeEquivalentTo("'Stringified Json Message' must not be empty.");
         }
 
-        [Fact]
-        public void Validate_Should_Return_False_And_Validation_Error_When_Value_Property_Is_Null()
-        {
-            //Arrange
-            EvaluationInput evaluationInputParameter = new(
-                key: "Input", value: null);
-
-            List<ValidationResult> errors;
-
-            //Act
-            bool isValid = evaluationInputParameter.Validate(out errors);
-
-            //Assert
-
-            isValid.Should().BeFalse();
-            errors.Count.Should().Be(1);
-            errors[0].ErrorMessage
-                .Should().BeEquivalentTo("The StringifiedJsonMessage field is required.");
-        }
-
-        [Theory]
-        [InlineData(null, null)]
-        [InlineData("", null)]
-        public void
-            Validate_Should_Return_False_And_validation_Errors_When_Both_Name_And_Value_Props_Are_Null(string name, object value)
-        {
-            //Arrange
-
-            EvaluationInput evaluationInputParameter = new(
-                key: null, value: null
-                );
-
-            List<ValidationResult> errors;
-
-            //Act
-
-            bool isValid = evaluationInputParameter.Validate(out errors);
-
-            //Assert
-
-            isValid.Should().BeFalse();
-            errors.Count.Should().Be(2);
-        }
-
-        [Fact]
-        public void Validate_Should_Return_True_And_No_Validation_Errors_For_Valid_Name_And_Value_Properties()
-
-        {
-            //Arrange
-
-            EvaluationInput evaluationInputParameter = new(
-                key: "Input", value: "{}"
-                );
-
-            List<ValidationResult> errors;
-
-            //Act
-            bool isValid = evaluationInputParameter.Validate(out errors);
-
-            //Assert
-
-            isValid.Should().BeTrue();
-            errors.Count.Should().Be(0);
-
-        }
 
     }
 }

@@ -18,43 +18,5 @@ namespace Az.Serverless.Bre.Func01.Models
         [JsonProperty(PropertyName = "stringifiedJsonMessage")]
         public string StringifiedJsonMessage { get; set; }
 
-        public EvaluationInput(string key, object value)
-        {
-            Name = key;
-
-            //if (value != null && value.GetType() == typeof(string))
-            //{
-            //    StringifiedJsonMessage = ConvertJsonToExpandoObject(value);
-            //}
-            //else
-            //{
-            //    StringifiedJsonMessage = value;
-            //}
-
-            //Value = value;
-            StringifiedJsonMessage = (string)value;
-        }
-
-        public bool Validate(out List<ValidationResult> validationResults)
-        {
-            validationResults = new List<ValidationResult>();
-
-            bool isValid = Validator.TryValidateObject(
-                instance: this,
-                validationContext: new ValidationContext(this, null, null),
-                validationResults: validationResults,
-                validateAllProperties: true
-                );
-
-            return isValid;
-        }
-
-        private ExpandoObject ConvertJsonToExpandoObject(object value)
-        {
-            var convertor = new ExpandoObjectConverter();
-
-            return JsonConvert.DeserializeObject<ExpandoObject>((string)value, convertor);
-        }
-
     }
 }

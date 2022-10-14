@@ -18,9 +18,11 @@ namespace Az.Serverless.Bre.Tests
         public void Mapper_Should_Map_EvaluationInput_To_RuleParameter_Without_Throwing_Exception()
         {
             //Arrange
-            EvaluationInput evaluationInput = new(
-                key: "Input", value: "{}"
-                );
+            EvaluationInput evaluationInput = new()
+            {
+                Name = "input",
+                StringifiedJsonMessage = "{}"
+            };
 
             var ruleParam = _mapper.Map<RuleParameter>(evaluationInput);
 

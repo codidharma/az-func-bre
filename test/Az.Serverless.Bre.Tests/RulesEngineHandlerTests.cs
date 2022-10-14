@@ -118,11 +118,15 @@ namespace Az.Serverless.Bre.Tests
         public async Task ExecuteRulesAsync_Should_Throw_ArgumentNullException_When_Rules_Config_Is_Empty_String()
         {
             //Arrange
-            string req = "{\"age\":65}";
-
+            
             var evaluationInputs = new EvaluationInput[]
                 {
-                    new EvaluationInput(key: "input", value: req)
+                    new EvaluationInput
+                    {
+                        Name = "input",
+                        StringifiedJsonMessage = "{\"age\":65}"
+                    }
+        
                 };
 
 
@@ -286,7 +290,11 @@ namespace Az.Serverless.Bre.Tests
             //data.durationInMonths = 12;
 
             evaluationInputs = new EvaluationInput[] {
-                new EvaluationInput(key: "input", value: builder.ToString())
+                new EvaluationInput
+                {
+                    Name = "input",
+                    StringifiedJsonMessage = builder.ToString()
+                }
             };
             return evaluationInputs;
         }

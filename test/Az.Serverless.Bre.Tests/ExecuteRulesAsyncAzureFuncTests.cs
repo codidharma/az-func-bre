@@ -25,15 +25,15 @@ using BRE = RulesEngine;
 
 namespace Az.Serverless.Bre.Tests
 {
-    public class ExecuteRulesAsyncAzureFuncTests
+    public class ExecuteRulesAsyncAzureFuncTests 
     {
         private readonly ExecuteRules _executeRules;
 
         private readonly ILogger _logger = (new NullLoggerFactory())
             .CreateLogger<ExecuteRulesAsyncAzureFuncTests>();
 
-        private Mock<HttpRequest> _mockHttpRequest;
-        private MemoryStream _memoryStream;
+        private Mock<HttpRequest>? _mockHttpRequest;
+        private MemoryStream? _memoryStream;
 
         public ExecuteRulesAsyncAzureFuncTests()
         {
@@ -43,7 +43,6 @@ namespace Az.Serverless.Bre.Tests
 
             _executeRules = new ExecuteRules(rulesStoreRepository, rulesEngineHandler, evalInputWrapperValidator);
         }
-
 
 
         [Fact]
@@ -105,20 +104,6 @@ namespace Az.Serverless.Bre.Tests
                 .BeEquivalentTo<BadRequestObjectResult>(expectedResult);
         }
 
-        //[Fact]
-        //public async Task Execute_Rules_Async_Should_Work_Without_Throwing_Error_When_WorkflowName_Is_Provided_In_Header()
-        //{
-        //    //Arrange
-
-        //    var httpRequest = MockHttpRequest(true, true, true);
-
-        //    //Act
-        //    var expectedResult = await _executeRules.RunAsync(httpRequest, _logger);
-
-        //    //Assert
-        //    expectedResult.Should().BeNull();
-
-        //}
 
         [Fact]
         public async Task Execute_Rules_Async_Should_Throw_Unsupported_Media_Type_If_Content_Type_Header_Is_Missing()
@@ -144,20 +129,6 @@ namespace Az.Serverless.Bre.Tests
 
         }
 
-        //[Fact]
-        //public async Task Execute_Rules_Async_Should_Execute_Without_Throwing_Error_When_Correct_ContentType_Is_Provided_In_Header()
-        //{
-        //    //Arrange
-
-        //    var httpRequest = MockHttpRequest(true, true, true);
-
-        //    //Act
-        //    var executionResult = await _executeRules.RunAsync(httpRequest, _logger);
-
-        //    //Assert
-        //    executionResult.Should().BeNull();
-
-        //}
 
         [Fact]
         public async Task Execute_Rules_Should_Throw_Bad_Request_Error_When_Model_Validation_Fails()
@@ -170,7 +141,9 @@ namespace Az.Serverless.Bre.Tests
             var executionResult = await _executeRules.RunAsync(httpRequest, _logger)
                 .ConfigureAwait(false);
 
-            //Assery
+            //Assert
+            ((ObjectResult)executionResult).StatusCode
+                .Should().Be(StatusCodes.Status400BadRequest);
 
         }
 
@@ -337,7 +310,11 @@ namespace Az.Serverless.Bre.Tests
             {
                 EvaluationInputs = new List<EvaluationInput>
                 {
-                    new EvaluationInput("input", body)
+                    new EvaluationInput
+                    {
+                        Name = "input",
+                        StringifiedJsonMessage = body
+                    }
                 }
             };
 

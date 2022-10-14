@@ -14,8 +14,8 @@ namespace Az.Serverless.Bre.Tests
             var evaluationInputWrapper = new EvaluationInputWrapper();
             evaluationInputWrapper.EvaluationInputs = new List<EvaluationInput>
             {
-                new EvaluationInput("input", null),
-                new EvaluationInput(null, null)
+                new EvaluationInput{ Name = "input", StringifiedJsonMessage = null},
+                new EvaluationInput{ Name = null, StringifiedJsonMessage = null}
             };
 
             var validator = new EvaluationInputWrapperValidator();
