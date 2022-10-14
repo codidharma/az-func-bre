@@ -29,7 +29,7 @@ namespace Az.Serverless.Bre.Tests
             isValid.Should().BeFalse();
             errors.Count.Should().Be(1);
             errors[0].ErrorMessage
-                .Should().BeEquivalentTo("The Key field is required.");
+                .Should().BeEquivalentTo("The Name field is required.");
 
         }
 
@@ -50,7 +50,7 @@ namespace Az.Serverless.Bre.Tests
             isValid.Should().BeFalse();
             errors.Count.Should().Be(1);
             errors[0].ErrorMessage
-                .Should().BeEquivalentTo("The Value field is required.");
+                .Should().BeEquivalentTo("The StringifiedJsonMessage field is required.");
         }
 
         [Theory]
@@ -109,7 +109,7 @@ namespace Az.Serverless.Bre.Tests
 
             //Act
 
-            evaluationInput.Value
+            evaluationInput.StringifiedJsonMessage
                 .Should().BeOfType<ExpandoObject>();
 
         }

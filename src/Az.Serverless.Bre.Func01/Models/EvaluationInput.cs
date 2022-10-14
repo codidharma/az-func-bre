@@ -11,22 +11,22 @@ namespace Az.Serverless.Bre.Func01.Models
 
         [Required]
         [MinLength(1)]
-        public string Key { get; private set; }
+        public string Name { get; private set; }
 
         [Required]
-        public object Value { get; private set; }
+        public object StringifiedJsonMessage { get; private set; }
 
         public EvaluationInput(string key, object value)
         {
-            Key = key;
+            Name = key;
 
             if (value != null && value.GetType() == typeof(string))
             {
-                Value = ConvertJsonToExpandoObject(value);
+                StringifiedJsonMessage = ConvertJsonToExpandoObject(value);
             }
             else
             {
-                Value = value;
+                StringifiedJsonMessage = value;
             }
 
             //Value = value;

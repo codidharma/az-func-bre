@@ -9,7 +9,7 @@ namespace Az.Serverless.Bre.Func01.Mapper.Profiles
         public RuleParameterMappingProfile()
         {
             CreateMap<EvaluationInput, RuleParameter>()
-                .ConvertUsing(x => new RuleParameter(x.Key, x.Value));
+                .ConvertUsing(x => new RuleParameter(x.Name, x.StringifiedJsonMessage));
         }
     }
 }

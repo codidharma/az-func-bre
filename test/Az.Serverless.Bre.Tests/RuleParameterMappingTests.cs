@@ -25,7 +25,7 @@ namespace Az.Serverless.Bre.Tests
             var ruleParam = _mapper.Map<RuleParameter>(evaluationInput);
 
             ruleParam.Name
-                .Should().BeEquivalentTo(evaluationInput.Key);
+                .Should().BeEquivalentTo(evaluationInput.Name);
 
 
         }
