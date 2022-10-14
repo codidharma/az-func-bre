@@ -83,11 +83,11 @@ namespace Az.Serverless.Bre.Func01.Functions
             }
 
             var aggregatedValidationErrors = new List<List<ValidationResult>>();
-            var evaluationInputs = new List<EvaluationInputParameter>();
+            var evaluationInputs = new List<EvaluationInput>();
 
             foreach (var formPart in formData)
             {
-                var evaluationInput = new EvaluationInputParameter(formPart.Key, formPart.Value.ToString());
+                var evaluationInput = new EvaluationInput(formPart.Key, formPart.Value.ToString());
 
                 bool isValid = evaluationInput.Validate(out List<ValidationResult> evaluationErrors);
 

@@ -122,9 +122,9 @@ namespace Az.Serverless.Bre.Tests
             dynamic data = new ExpandoObject();
             data.age = 65;
 
-            var evaluationInputs = new EvaluationInputParameter[]
+            var evaluationInputs = new EvaluationInput[]
                 {
-                    new EvaluationInputParameter(key: "input", value: data)
+                    new EvaluationInput(key: "input", value: data)
                 };
 
 
@@ -160,7 +160,7 @@ namespace Az.Serverless.Bre.Tests
         {
             //Arrange
             string rulesConfig;
-            EvaluationInputParameter[] evaluationInputs;
+            EvaluationInput[] evaluationInputs;
 
             SetupTestData(out rulesConfig, out evaluationInputs);
 
@@ -175,7 +175,7 @@ namespace Az.Serverless.Bre.Tests
         {
             //Arrange
             string rulesConfig;
-            EvaluationInputParameter[] evaluationInputs;
+            EvaluationInput[] evaluationInputs;
 
             SetupTestData(out rulesConfig, out evaluationInputs);
 
@@ -228,7 +228,7 @@ namespace Az.Serverless.Bre.Tests
         {
             //Arrange
             string rulesConfig;
-            EvaluationInputParameter[] evaluationInputs;
+            EvaluationInput[] evaluationInputs;
 
             SetupTestData(out rulesConfig, out evaluationInputs);
 
@@ -252,7 +252,7 @@ namespace Az.Serverless.Bre.Tests
         {
             //Arrange
             string rulesConfig;
-            EvaluationInputParameter[] evaluationInputs;
+            EvaluationInput[] evaluationInputs;
             SetupTestData(out rulesConfig, out evaluationInputs);
 
             //Act
@@ -266,16 +266,16 @@ namespace Az.Serverless.Bre.Tests
         }
 
 
-        private void SetupTestData(out string rulesConfig, out EvaluationInputParameter[] evaluationInputs)
+        private void SetupTestData(out string rulesConfig, out EvaluationInput[] evaluationInputs)
         {
             rulesConfig = GetRulesConfig();
 
             evaluationInputs = SetupInput();
         }
 
-        private EvaluationInputParameter[] SetupInput()
+        private EvaluationInput[] SetupInput()
         {
-            EvaluationInputParameter[] evaluationInputs;
+            EvaluationInput[] evaluationInputs;
 
             StringBuilder builder = new StringBuilder("{");
             builder.Append("\"age\":65");
@@ -287,8 +287,8 @@ namespace Az.Serverless.Bre.Tests
             //data.age = 65;
             //data.durationInMonths = 12;
 
-            evaluationInputs = new EvaluationInputParameter[] {
-                new EvaluationInputParameter(key: "input", value: builder.ToString())
+            evaluationInputs = new EvaluationInput[] {
+                new EvaluationInput(key: "input", value: builder.ToString())
             };
             return evaluationInputs;
         }

@@ -33,7 +33,7 @@ namespace Az.Serverless.Bre.Func01.Handlers.Implementations
 
         }
 
-        public async Task<EvaluationOutput> ExecuteRulesAsync(string rulesConfigFile, EvaluationInputParameter[] evaluationInputs)
+        public async Task<EvaluationOutput> ExecuteRulesAsync(string rulesConfigFile, EvaluationInput[] evaluationInputs)
         {
             if (string.IsNullOrEmpty(rulesConfigFile))
                 throw new

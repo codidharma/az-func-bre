@@ -14,7 +14,7 @@ namespace Az.Serverless.Bre.Tests
         public void Validate_Should_Return_False_And_Validation_Error_When_Key_Property_IsNullOrEmpty(string name)
         {
             //Arrange
-            EvaluationInputParameter evaluationInput = new(
+            EvaluationInput evaluationInput = new(
                 key: null, value: new ExpandoObject()
                 );
 
@@ -37,7 +37,7 @@ namespace Az.Serverless.Bre.Tests
         public void Validate_Should_Return_False_And_Validation_Error_When_Value_Property_Is_Null()
         {
             //Arrange
-            EvaluationInputParameter evaluationInputParameter = new(
+            EvaluationInput evaluationInputParameter = new(
                 key: "Input", value: null);
 
             List<ValidationResult> errors;
@@ -61,7 +61,7 @@ namespace Az.Serverless.Bre.Tests
         {
             //Arrange
 
-            EvaluationInputParameter evaluationInputParameter = new(
+            EvaluationInput evaluationInputParameter = new(
                 key: null, value: null
                 );
 
@@ -83,7 +83,7 @@ namespace Az.Serverless.Bre.Tests
         {
             //Arrange
 
-            EvaluationInputParameter evaluationInputParameter = new(
+            EvaluationInput evaluationInputParameter = new(
                 key: "Input", value: "{}"
                 );
 
@@ -103,7 +103,7 @@ namespace Az.Serverless.Bre.Tests
         public void EvaluationInputParameter_Constructor_Should_Convert_Json_String_To_Expando_Object()
         {
             //Arrange
-            EvaluationInputParameter evaluationInput = new(
+            EvaluationInput evaluationInput = new(
                 key: "Input", value: "{}");
 
 

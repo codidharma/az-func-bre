@@ -18,7 +18,7 @@ namespace Az.Serverless.Bre.Tests
         public void Mapper_Should_Map_EvaluationInput_To_RuleParameter_Without_Throwing_Exception()
         {
             //Arrange
-            EvaluationInputParameter evaluationInput = new(
+            EvaluationInput evaluationInput = new(
                 key: "Input", value: "{}"
                 );
 

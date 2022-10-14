@@ -8,7 +8,7 @@ namespace Az.Serverless.Bre.Func01.Mapper.Profiles
     {
         public RuleParameterMappingProfile()
         {
-            CreateMap<EvaluationInputParameter, RuleParameter>()
+            CreateMap<EvaluationInput, RuleParameter>()
                 .ConvertUsing(x => new RuleParameter(x.Key, x.Value));
         }
     }

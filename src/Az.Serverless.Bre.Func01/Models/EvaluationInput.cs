@@ -6,7 +6,7 @@ using System.Dynamic;
 
 namespace Az.Serverless.Bre.Func01.Models
 {
-    public class EvaluationInputParameter
+    public class EvaluationInput
     {
 
         [Required]
@@ -16,7 +16,7 @@ namespace Az.Serverless.Bre.Func01.Models
         [Required]
         public object Value { get; private set; }
 
-        public EvaluationInputParameter(string key, object value)
+        public EvaluationInput(string key, object value)
         {
             Key = key;
 
