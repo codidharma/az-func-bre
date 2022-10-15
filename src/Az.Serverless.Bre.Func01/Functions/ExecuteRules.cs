@@ -7,10 +7,14 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
+using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Attributes;
+using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Enums;
 using Microsoft.Extensions.Logging;
+using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using System;
 using System.IO;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace Az.Serverless.Bre.Func01.Functions
@@ -41,6 +45,23 @@ namespace Az.Serverless.Bre.Func01.Functions
         }
 
         [FunctionName($"{nameof(ExecuteRules)}Async")]
+        [OpenApiSecurity(schemeName: "functions_key", schemeType: SecuritySchemeType.ApiKey, In = OpenApiSecurityLocationType.Header,
+            Name = "x-functions-key")]
+        [OpenApiOperation(operationId: "execuetrules", tags: new[] { "executerules" },
+            Summary = "Processes the received input and executes the defined rules"
+            , Visibility = OpenApiVisibilityType.Important)]
+        [OpenApiParameter(name: "x-workflow-name", Description = "Name of the rules config file which is stored in rules store",
+            Required = true, Type = typeof(string), In = ParameterLocation.Header, Visibility = OpenApiVisibilityType.Important)]
+        [OpenApiRequestBody(contentType: "application/json", bodyType: typeof(EvaluationInputWrapper), Required = true,
+           Description = "The data against which the rules defined in the config are executed")]
+        [OpenApiResponseWithBody(statusCode: HttpStatusCode.UnsupportedMediaType, contentType: "application/json",
+            bodyType: typeof(object), Description = "Unsupported media type error response")]
+        [OpenApiResponseWithBody(statusCode: HttpStatusCode.BadRequest, contentType: "application/json",
+            bodyType: typeof(object), Description = "Bad request error response")]
+        [OpenApiResponseWithBody(statusCode: HttpStatusCode.NotFound, contentType: "application/json",
+            bodyType: typeof(object), Description = "Provided rules config not found in rule store error response")]
+        [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json",
+            bodyType: typeof(EvaluationOutput), Description = "Successful response")]
         public async Task<IActionResult> RunAsync(
             [HttpTrigger(authLevel: AuthorizationLevel.Function, methods: "POST")] HttpRequest request,
             ILogger logger)
